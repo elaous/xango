@@ -1,8 +1,8 @@
 {
-  "name": "vscode-gox-grammar-test",
+  "name": "vscode-xango-grammar-test",
   "private": true,
   "version": "0.0.0",
-  "description": "Tokenizes the repo's .gox example files with the actual grammar to catch regressions (unbalanced patterns, injection selector breakage) without needing to open VS Code.",
+  "description": "Tokenizes the repo's .xg example files with the actual grammar to catch regressions (unbalanced patterns, injection selector breakage) without needing to open VS Code.",
   "scripts": {
     "fetch-go-grammar": "node fetch-go-grammar.js",
     "fetch-embedded-grammars": "node fetch-embedded-grammars.js",

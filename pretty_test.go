@@ -1,4 +1,4 @@
-package gox
+package xango
 
 import (
 	"strings"
@@ -62,7 +62,7 @@ func TestRenderIndentedBreaksNextToASingleInlineSibling(t *testing.T) {
 // one case RenderIndented has to stay conservative about: the sibling
 // boundary between two adjacent inline-level elements (button, button
 // -- exactly the shape a row of toolbar buttons has, each with an
-// icon span and a text label the same way ui/toolbar.gox's own
+// icon span and a text label the same way ui/toolbar.xg's own
 // iconBtn builds one) with nothing block-level anywhere between them
 // never gets a newline inserted, since that whitespace would sit
 // mid-line and render as a real, visible gap. Each button itself
@@ -141,7 +141,7 @@ func stripIndentation(s string) string {
 }
 
 // TestRenderIndentedPassesMultilineRawThroughVerbatim proves a Raw
-// child (dangerouslySetInnerHTML-equivalent, e.g. editor/ui/shell.gox's
+// child (dangerouslySetInnerHTML-equivalent, e.g. editor/ui/shell.xg's
 // own bootScript, whose <script> content is real multi-line JavaScript
 // with genuine leading-space indentation of its own) is emitted
 // completely untouched -- RenderIndented must never insert, remove, or

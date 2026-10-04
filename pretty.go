@@ -1,4 +1,4 @@
-package gox
+package xango
 
 import (
 	"html"
@@ -49,7 +49,7 @@ func isBlockLevel(n Node) bool {
 // layout (the classic "inline-block whitespace gap" -- exactly why
 // e.g. two toolbar buttons can't just be pretty-printed apart without
 // first being grouped under a real block-level wrapper, see
-// editor/ui/toolbar.gox's own .toolbar-group divs).
+// editor/ui/toolbar.xg's own .toolbar-group divs).
 func canBreakBoundary(a, b Node) bool {
 	return isBlockLevel(a) || isBlockLevel(b)
 }

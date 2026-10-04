@@ -1,4 +1,4 @@
-package gox
+package xango
 
 import (
 	"reflect"

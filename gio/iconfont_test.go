@@ -1,4 +1,4 @@
-package goxgio
+package xangogio
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 	"gioui.org/op"
 	"gioui.org/widget/material"
 
-	"github.com/elaous/gojiberry/gox"
+	"github.com/elaous/gojiberry/xango"
 )
 
 // TestIconFontTranslatesRecognizedSpanTextToASingleGlyph drives
@@ -25,7 +25,7 @@ import (
 // -- not just "something about the width changed by coincidence."
 // Translate maps to Typeface "" (Renderer's own default, the same face
 // th.Shaper already resolves everything else through) rather than a
-// real vendored icon font, since this proves goxgio's own substitution
+// real vendored icon font, since this proves xangogio's own substitution
 // mechanism in isolation; OnDesign's own native module is responsible
 // for verifying its real Material Symbols asset separately.
 func TestIconFontTranslatesRecognizedSpanTextToASingleGlyph(t *testing.T) {
@@ -36,7 +36,7 @@ func TestIconFontTranslatesRecognizedSpanTextToASingleGlyph(t *testing.T) {
 	defer w.Release()
 
 	th := material.NewTheme()
-	node := gox.El("span", []gox.Attr{gox.A("class", "material-symbols-outlined")}, gox.Text("format_bold"))
+	node := xango.El("span", []xango.Attr{xango.A("class", "material-symbols-outlined")}, xango.Text("format_bold"))
 
 	frame := func(iconFont *IconFont) (*image.RGBA, layout.Dimensions) {
 		renderer := New()
@@ -99,7 +99,7 @@ func TestIconFontTranslatesRecognizedSpanTextToASingleGlyph(t *testing.T) {
 
 	// A span outside IconFont's own Class must be untouched even when
 	// Translate would otherwise recognize its text.
-	otherClass := gox.El("span", []gox.Attr{gox.A("class", "something-else")}, gox.Text("format_bold"))
+	otherClass := xango.El("span", []xango.Attr{xango.A("class", "something-else")}, xango.Text("format_bold"))
 	renderer := New()
 	renderer.IconFont = translated
 	var ops op.Ops

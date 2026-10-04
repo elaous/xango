@@ -1,4 +1,4 @@
-package gox
+package xango
 
 import "sync"
 
@@ -16,7 +16,7 @@ var (
 	styleIDs = map[string]bool{}
 )
 
-// RegisterStyle adds a stylesheet to the program's set. goxc generates a
+// RegisterStyle adds a stylesheet to the program's set. xgc generates a
 // call to it from a blank CSS import,
 //
 //	import _ "github.com/me/app/components/button.css"
@@ -44,13 +44,13 @@ func RegisteredStyles() []StyleSheet {
 }
 
 // Styles returns one <style> element per registered stylesheet (each
-// tagged data-gox-style with its ID), for a page's <head>; Document puts
+// tagged data-xango-style with its ID), for a page's <head>; Document puts
 // them there itself. It is a Fragment with no children when nothing was
 // registered.
 func Styles() Node {
 	var out []Node
 	for _, s := range RegisteredStyles() {
-		out = append(out, El("style", []Attr{A("data-gox-style", s.ID)}, Raw(styleEnd.ReplaceAllString(s.CSS, `<\/$1`))))
+		out = append(out, El("style", []Attr{A("data-xango-style", s.ID)}, Raw(styleEnd.ReplaceAllString(s.CSS, `<\/$1`))))
 	}
 	return Frag(out...)
 }

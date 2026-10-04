@@ -40,7 +40,7 @@ async function main() {
     "source.css": JSON.parse(fs.readFileSync(EMBEDDED.css, "utf8")),
     "source.sql": JSON.parse(fs.readFileSync(EMBEDDED.sql, "utf8")),
     "source.json": JSON.parse(fs.readFileSync(EMBEDDED.json, "utf8")),
-    "gox.embedded-highlight.injection": JSON.parse(
+    "xango.embedded-highlight.injection": JSON.parse(
       fs.readFileSync(path.join(SYNTAXES_DIR, "embedded-highlight.tmLanguage.json"), "utf8")
     ),
   };
@@ -48,7 +48,7 @@ async function main() {
   const registry = new vsctm.Registry({
     onigLib: Promise.resolve(onigLib),
     loadGrammar: async (scopeName) => grammars[scopeName] || null,
-    getInjections: (scopeName) => (scopeName === "source.go" ? ["gox.embedded-highlight.injection"] : undefined),
+    getInjections: (scopeName) => (scopeName === "source.go" ? ["xango.embedded-highlight.injection"] : undefined),
   });
 
   const grammar = await registry.loadGrammar("source.go");

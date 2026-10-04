@@ -1,4 +1,4 @@
-package gox
+package xango
 
 import (
 	"fmt"
@@ -60,9 +60,9 @@ func (rw *renderWriter) render(n Node) {
 	case KindElement:
 		rw.renderElement(n)
 	case KindHost:
-		rw.err = fmt.Errorf("gox: host node %q has no HTML form; render it with its own renderer", n.Tag)
+		rw.err = fmt.Errorf("xango: host node %q has no HTML form; render it with its own renderer", n.Tag)
 	default:
-		rw.err = fmt.Errorf("gox: unknown node kind %d", n.Kind)
+		rw.err = fmt.Errorf("xango: unknown node kind %d", n.Kind)
 	}
 }
 

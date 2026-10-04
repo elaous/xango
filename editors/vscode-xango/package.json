@@ -1,7 +1,7 @@
 {
-  "name": "gox-language",
-  "displayName": "gox",
-  "description": "Syntax highlighting for .gox files (Go with JSX-like tags, generic component tags, boolean attributes and resource imports such as _ \"module/path/styles.css\"), plus //language=-annotated embedded-language strings in any .go file",
+  "name": "xango-language",
+  "displayName": "Xangô",
+  "description": "Syntax highlighting for .xg files (Go with JSX-like tags, generic component tags, boolean attributes and resource imports such as _ \"module/path/styles.css\"), plus //language=-annotated embedded-language strings in any .go file",
   "version": "0.2.0",
   "engines": {
     "vscode": "^1.80.0"
@@ -12,43 +12,43 @@
   "contributes": {
     "languages": [
       {
-        "id": "gox",
+        "id": "xango",
         "aliases": [
-          "gox",
+          "xango",
           "Gojiberry"
         ],
         "extensions": [
-          ".gox"
+          ".xg"
         ],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "gox",
-        "scopeName": "source.gox",
-        "path": "./syntaxes/gox.tmLanguage.json"
+        "language": "xango",
+        "scopeName": "source.xg",
+        "path": "./syntaxes/xango.tmLanguage.json"
       },
       {
-        "scopeName": "gox.tags.injection",
-        "path": "./syntaxes/gox-tags.tmLanguage.json",
+        "scopeName": "xango.tags.injection",
+        "path": "./syntaxes/xango-tags.tmLanguage.json",
         "injectTo": [
-          "source.gox"
+          "source.xg"
         ]
       },
       {
-        "scopeName": "gox.imports.injection",
-        "path": "./syntaxes/gox-imports.tmLanguage.json",
+        "scopeName": "xango.imports.injection",
+        "path": "./syntaxes/xango-imports.tmLanguage.json",
         "injectTo": [
-          "source.gox"
+          "source.xg"
         ]
       },
       {
-        "scopeName": "gox.embedded-highlight.injection",
+        "scopeName": "xango.embedded-highlight.injection",
         "path": "./syntaxes/embedded-highlight.tmLanguage.json",
         "injectTo": [
           "source.go",
-          "source.gox"
+          "source.xg"
         ]
       }
     ]

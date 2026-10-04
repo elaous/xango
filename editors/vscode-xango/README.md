@@ -1,11 +1,11 @@
-# gox VS Code extension (syntax highlighting)
+# xango VS Code extension (syntax highlighting)
 
-Provides `.gox` file association and syntax highlighting: real Go
+Provides `.xg` file association and syntax highlighting: real Go
 tokenization (via VS Code's own bundled Go grammar or the
 [golang.go](https://marketplace.visualstudio.com/items?itemName=golang.go)
 extension, whichever provides `source.go`) plus `<Tag>`/`{expr}`
 highlighting layered on top via a TextMate **injection grammar**. Also
-includes a second, general-purpose injection — not gox-specific, works
+includes a second, general-purpose injection — not xango-specific, works
 in any `.go` file — for `//language=`-annotated embedded-language raw
 strings; see below.
 
@@ -14,7 +14,7 @@ strings; see below.
 - **Tags** `<div class="x">`, components `<pkg.Component .../>` (dotted
   names), fragments `<>...</>`, `{expr}` holes (Go, with tags allowed
   inside), and Go **function props** whose bodies contain markup:
-  `pages={func(page gox.Node, n int) gox.Node { return <>...</> }}`.
+  `pages={func(page xango.Node, n int) xango.Node { return <>...</> }}`.
 - **Generic component tags** `<components.List[Person] items={...} />`:
   the `[Person]` type arguments are scoped as types, and the closing tag
   may repeat them.
@@ -26,8 +26,8 @@ strings; see below.
   grammar can't make sense of), blank and named CSS imports
   `_ "github.com/me/app/components/button.css"`, and
   `.json/.jsonc/.jsonl/.css/.hcl/.proto/.capnp/.sql` paths in general get
-  their own scopes (`meta.import.resource.gox`,
-  `entity.name.import.resource.gox`, `constant.other.extension.gox`), so a
+  their own scopes (`meta.import.resource.xg`,
+  `entity.name.import.resource.xg`, `constant.other.extension.xg`), so a
   theme can show them as files instead of packages. Ordinary Go imports
   are left to the Go grammar.
 
@@ -72,9 +72,9 @@ placement (marker on the line *before* the string) doesn't work here —
 this extension recognizes only a same-line spelling, not a full
 reimplementation of JetBrains' convention.
 
-This works in plain `.go` files as much as `.gox` ones — it's
+This works in plain `.go` files as much as `.xg` ones — it's
 registered as its own injection (`syntaxes/embedded-highlight.tmLanguage.json`,
-`injectTo: ["source.go", "source.gox"]`), independent of the gox tag
+`injectTo: ["source.go", "source.xg"]`), independent of the xango tag
 grammar.
 
 ## Why an injection grammar, not just a combined pattern list
@@ -85,14 +85,14 @@ match race at the outermost scope. Once Go's own grammar pushes a
 nested context (entering a function body via `{`, for instance), that
 nested context has its own self-contained pattern set with no
 knowledge of a sibling top-level rule, so tags inside a function body
-silently stop highlighting. A `injectionSelector: "L:source.gox"`
+silently stop highlighting. A `injectionSelector: "L:source.xg"`
 grammar reapplies at *every* nesting depth instead, which is what
-`syntaxes/gox-tags.tmLanguage.json` (registered via `injectTo` in
+`syntaxes/xango-tags.tmLanguage.json` (registered via `injectTo` in
 `package.json`) does. `test/tokenize.js` exercises exactly this case
 against the repo's real example files.
 
-The selector is actually `"L:source.gox - comment"`, not just
-`"L:source.gox"` -- without the exclusion, a plain comment mentioning
+The selector is actually `"L:source.xg - comment"`, not just
+`"L:source.xg"` -- without the exclusion, a plain comment mentioning
 a bare `<Word>`-shaped sequence with no closing tag nearby (e.g. "this
 page doesn't write either `<script>` tag itself", a real doc comment
 that used to trigger exactly this) gets misread as an unterminated
@@ -102,21 +102,21 @@ tag-open. Since `tagNamed`'s own pattern list doesn't include
 the rest of the file, because the tokenizer is stuck waiting for a
 `</script>` that never comes.  `test/tag-in-comment-test.js` is a
 regression test for exactly this against
-`test/fixtures/tag-mention-in-comment.gox`.
+`test/fixtures/tag-mention-in-comment.xg`.
 
 ## Known limitations
 
 - Tag detection in the grammar is a heuristic (`<` immediately
   followed by a letter and then whitespace, `/`, `>` or the end of the
   line; ended by a backreference to its own opening name) — it does not
-  replicate goxc's real expression-start disambiguation. A tightly-spaced
+  replicate xgc's real expression-start disambiguation. A tightly-spaced
   `a<B ` or `x<y[i] ` with no spaces around the `<` can be miscolored as
   a tag-open (`x<y[0]` is not: type arguments must start with a letter); idiomatic (gofmt'd) Go always
   spaces binary operators, so this is rare in practice. TSX's own
   grammar has the same class of limitation for the same reason.
 - No language server: no completions, hover, go-to-definition, or
   diagnostics. That would need an LSP proxy translating between
-  `.gox` source positions and `gopls`'s view of the generated `.go`
+  `.xg` source positions and `gopls`'s view of the generated `.go`
   file, which in turn needs the transpiler to emit `//line` directives
   (a documented gap in the main README) — a natural follow-up once
   that lands.
@@ -136,12 +136,12 @@ cd test
 npm install
 npm run fetch-go-grammar         # downloads VS Code's bundled Go grammar (not redistributed here)
 npm run fetch-embedded-grammars  # downloads its HTML/CSS/SQL/JSON grammars too
-npm test                         # syntax-test.js: fixtures/new-syntax.gox.txt -- resource
+npm test                         # syntax-test.js: fixtures/new-syntax.xg.txt -- resource
                                   # imports, generic tags, boolean attributes, multi-line
                                   # opening tags, prose and tight comparisons that must
                                   # NOT be tags (node dump.js <file> prints every
                                   # token's scopes, for debugging the grammar)
-                                  # tokenize.js: every examples/**/*.gox has Go
+                                  # tokenize.js: every examples/**/*.xg has Go
                                   # keywords and (where present) tags, including
                                   # deep inside nested blocks
                                   # highlight-test.js: fixtures/highlight-sample.go's
@@ -153,5 +153,5 @@ npm test                         # syntax-test.js: fixtures/new-syntax.gox.txt -
 ## Installing locally
 
 Symlink or copy this directory into your VS Code extensions folder
-(`~/.vscode/extensions/gox-language-0.2.0`) and reload the window, or
+(`~/.vscode/extensions/xango-language-0.2.0`) and reload the window, or
 package it with `vsce package` once you're ready to distribute it.
