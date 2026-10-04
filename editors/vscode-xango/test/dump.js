@@ -1,10 +1,10 @@
-// Prints each token's text and scopes for a .gox file (debugging aid):
-//   node dump.js fixtures/new-syntax.gox.txt
+// Prints each token's text and scopes for a .xg file (debugging aid):
+//   node dump.js fixtures/new-syntax.xg.txt
 const fs = require("fs");
 const path = require("path");
-const { loadGox } = require("./lib.js");
+const { loadXango } = require("./lib.js");
 
-loadGox().then((grammar) => {
+loadXango().then((grammar) => {
   const lines = fs.readFileSync(process.argv[2], "utf8").split("\n");
   let stack = require("vscode-textmate").INITIAL;
   lines.forEach((line, i) => {

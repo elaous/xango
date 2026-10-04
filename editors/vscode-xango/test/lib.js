@@ -1,4 +1,4 @@
-// Loads the gox grammar (base + tag injection) over VS Code's Go grammar.
+// Loads the xango grammar (base + tag injection) over VS Code's Go grammar.
 const fs = require("fs");
 const path = require("path");
 const oniguruma = require("vscode-oniguruma");
@@ -7,7 +7,7 @@ const vsctm = require("vscode-textmate");
 const SYNTAXES_DIR = path.join(__dirname, "..", "syntaxes");
 const read = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 
-async function loadGox() {
+async function loadXango() {
   const goPath = path.join(__dirname, "go.tmLanguage.json");
   if (!fs.existsSync(goPath)) {
     console.error("go.tmLanguage.json missing -- run `npm run fetch-go-grammar` first");
@@ -21,16 +21,16 @@ async function loadGox() {
   };
   const grammars = {
     "source.go": read(goPath),
-    "source.gox": read(path.join(SYNTAXES_DIR, "gox.tmLanguage.json")),
-    "gox.tags.injection": read(path.join(SYNTAXES_DIR, "gox-tags.tmLanguage.json")),
-    "gox.imports.injection": read(path.join(SYNTAXES_DIR, "gox-imports.tmLanguage.json")),
+    "source.xg": read(path.join(SYNTAXES_DIR, "xango.tmLanguage.json")),
+    "xango.tags.injection": read(path.join(SYNTAXES_DIR, "xango-tags.tmLanguage.json")),
+    "xango.imports.injection": read(path.join(SYNTAXES_DIR, "xango-imports.tmLanguage.json")),
   };
   const registry = new vsctm.Registry({
     onigLib: Promise.resolve(onigLib),
     loadGrammar: async (scope) => grammars[scope] || null,
-    getInjections: (scope) => (scope === "source.gox" ? ["gox.tags.injection", "gox.imports.injection"] : undefined),
+    getInjections: (scope) => (scope === "source.xg" ? ["xango.tags.injection", "xango.imports.injection"] : undefined),
   });
-  return registry.loadGrammar("source.gox");
+  return registry.loadGrammar("source.xg");
 }
 
 // tokensOf returns [{text, scopes}] for every token of src.
@@ -45,4 +45,4 @@ function tokensOf(grammar, src) {
   return out;
 }
 
-module.exports = { loadGox, tokensOf };
+module.exports = { loadXango, tokensOf };

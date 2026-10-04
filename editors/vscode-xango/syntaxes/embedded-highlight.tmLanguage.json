@@ -1,9 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "embedded-highlight",
-  "scopeName": "gox.embedded-highlight.injection",
-  "comment": "General Go feature, not gox-specific: a raw string literal that opens with `//language=<lang>` -- JetBrains' own Language Injection marker, reused as-is rather than inventing a new spelling, since it's real, established prior art (`@` isn't a Go token at all outside a string/comment, so there was no Go precedent for an `@`-prefixed marker to begin with) -- on the SAME line as the backtick gets that language's syntax highlighting for the rest of its content; the same magic-comment idea as es6-string-html/vscode-styled-components for JS template literals or the `/* GraphQL */` convention. The marker must share a line with the opening backtick -- VS Code's tokenizer processes one line at a time, so a begin pattern's lookahead can never see content on the next line; there is no way to detect a marker placed on its own line below the backtick, which is how JetBrains' own tooling places it, so this is a same-line-only subset of that convention, not a full reimplementation of it.",
-  "injectionSelector": "L:source.go, L:source.gox",
+  "scopeName": "xango.embedded-highlight.injection",
+  "comment": "General Go feature, not xango-specific: a raw string literal that opens with `//language=<lang>` -- JetBrains' own Language Injection marker, reused as-is rather than inventing a new spelling, since it's real, established prior art (`@` isn't a Go token at all outside a string/comment, so there was no Go precedent for an `@`-prefixed marker to begin with) -- on the SAME line as the backtick gets that language's syntax highlighting for the rest of its content; the same magic-comment idea as es6-string-html/vscode-styled-components for JS template literals or the `/* GraphQL */` convention. The marker must share a line with the opening backtick -- VS Code's tokenizer processes one line at a time, so a begin pattern's lookahead can never see content on the next line; there is no way to detect a marker placed on its own line below the backtick, which is how JetBrains' own tooling places it, so this is a same-line-only subset of that convention, not a full reimplementation of it.",
+  "injectionSelector": "L:source.go, L:source.xg",
   "patterns": [
     { "include": "#highlightHTML" },
     { "include": "#highlightCSS" },

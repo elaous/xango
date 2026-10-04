@@ -1,4 +1,4 @@
-package goxgio
+package xangogio
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ import (
 	"gioui.org/op"
 	"gioui.org/widget/material"
 
-	"github.com/elaous/gojiberry/gox"
+	"github.com/elaous/gojiberry/xango"
 )
 
 // TestCheckboxHandlesARealPointerClick drives type=checkbox support
@@ -41,10 +41,10 @@ func TestCheckboxHandlesARealPointerClick(t *testing.T) {
 	renderer := New()
 	var fired bool
 	var lastChecked bool
-	node := gox.El("input", []gox.Attr{
-		gox.A("type", "checkbox"),
-		gox.A("id", "agree"),
-		gox.On("change", func(e gox.Event) {
+	node := xango.El("input", []xango.Attr{
+		xango.A("type", "checkbox"),
+		xango.A("id", "agree"),
+		xango.On("change", func(e xango.Event) {
 			fired = true
 			lastChecked = e.Checked
 		}),
@@ -119,12 +119,12 @@ func TestTextInputHandlesRealClickFocusAndTyping(t *testing.T) {
 	renderer := New()
 	var fired bool
 	var lastValue string
-	node := gox.El("input", []gox.Attr{
-		gox.A("type", "text"),
-		gox.A("id", "name"),
-		gox.On("change", func(e gox.Event) {
+	node := xango.El("input", []xango.Attr{
+		xango.A("type", "text"),
+		xango.A("id", "name"),
+		xango.On("change", func(e xango.Event) {
 			fired = true
-			lastValue = gox.EventValue[string](e)
+			lastValue = xango.EventValue[string](e)
 		}),
 	})
 
@@ -197,11 +197,11 @@ func TestTextareaHandlesRealClickFocusAndTyping(t *testing.T) {
 	renderer := New()
 	var fired bool
 	var lastValue string
-	node := gox.El("textarea", []gox.Attr{
-		gox.A("id", "comment-text"),
-		gox.On("change", func(e gox.Event) {
+	node := xango.El("textarea", []xango.Attr{
+		xango.A("id", "comment-text"),
+		xango.On("change", func(e xango.Event) {
 			fired = true
-			lastValue = gox.EventValue[string](e)
+			lastValue = xango.EventValue[string](e)
 		}),
 	})
 
@@ -276,9 +276,9 @@ func TestTextareaPreservesNewlinesUnlikeSingleLineInput(t *testing.T) {
 	typeAndCapture := func(tag string) string {
 		renderer := New()
 		var last string
-		node := gox.El(tag, []gox.Attr{
-			gox.A("id", "field"),
-			gox.On("change", func(e gox.Event) { last = gox.EventValue[string](e) }),
+		node := xango.El(tag, []xango.Attr{
+			xango.A("id", "field"),
+			xango.On("change", func(e xango.Event) { last = xango.EventValue[string](e) }),
 		})
 
 		var router input.Router
@@ -338,8 +338,8 @@ func TestClassStyleAppliesBackgroundAndPadding(t *testing.T) {
 	defer w.Release()
 
 	th := material.NewTheme()
-	node := gox.El("div", []gox.Attr{gox.A("class", "panel")},
-		gox.El("span", nil, gox.Text("hi")),
+	node := xango.El("div", []xango.Attr{xango.A("class", "panel")},
+		xango.El("span", nil, xango.Text("hi")),
 	)
 
 	frame := func(styles map[string]ClassStyle) *image.RGBA {
@@ -387,7 +387,7 @@ func TestClassStyleAppliesBackgroundAndPadding(t *testing.T) {
 
 // TestSelectOpensAndFiresOnChangeOnRealClicks drives select/option
 // support -- the one tag Gio's own widget/material has no native
-// equivalent for, so goxgio has to build its own dropdown rather than
+// equivalent for, so xangogio has to build its own dropdown rather than
 // wrap an existing widget -- through real clicks via Renderer.Click,
 // the same "simple programmatic click" mechanism (Gio's own
 // widget.Clickable.Click()) the original button test already
@@ -408,19 +408,19 @@ func TestSelectOpensAndFiresOnChangeOnRealClicks(t *testing.T) {
 	var fired bool
 	var lastValue string
 	selected := "b"
-	node := func() gox.Node {
-		opt := func(value, label string) gox.Node {
-			attrs := []gox.Attr{gox.A("value", value)}
+	node := func() xango.Node {
+		opt := func(value, label string) xango.Node {
+			attrs := []xango.Attr{xango.A("value", value)}
 			if value == selected {
-				attrs = append(attrs, gox.A("selected", "selected"))
+				attrs = append(attrs, xango.A("selected", "selected"))
 			}
-			return gox.El("option", attrs, gox.Text(label))
+			return xango.El("option", attrs, xango.Text(label))
 		}
-		return gox.El("select", []gox.Attr{
-			gox.A("id", "color"),
-			gox.On("change", func(e gox.Event) {
+		return xango.El("select", []xango.Attr{
+			xango.A("id", "color"),
+			xango.On("change", func(e xango.Event) {
 				fired = true
-				lastValue = gox.EventValue[string](e)
+				lastValue = xango.EventValue[string](e)
 			}),
 		},
 			opt("a", "A"), opt("b", "B"), opt("c", "C"),
@@ -505,9 +505,9 @@ func TestSelectOpensAndFiresOnChangeOnRealClicks(t *testing.T) {
 
 // TestOnFiresForANodeWithNoAttrHandler proves Renderer.On's ID-based
 // fallback actually fires against a node carrying no Attr handler of
-// its own -- the exact shape every real OnDesign editor/ui/*.gox
-// component takes, since none of them use gox.On (interactivity is
-// wired externally by ID instead, matching main.gox's own
+// its own -- the exact shape every real OnDesign editor/ui/*.xg
+// component takes, since none of them use xango.On (interactivity is
+// wired externally by ID instead, matching main.xg's own
 // ed.on(id, event, fn)); gio-counter-demo's Counter, by contrast,
 // always sets an Attr handler and so never exercises this path. Uses
 // the same real-click mechanism (Renderer.Click, Gio's own
@@ -522,10 +522,10 @@ func TestOnFiresForANodeWithNoAttrHandler(t *testing.T) {
 
 	th := material.NewTheme()
 	renderer := New()
-	node := gox.El("button", []gox.Attr{gox.A("id", "close")}, gox.Text("×"))
+	node := xango.El("button", []xango.Attr{xango.A("id", "close")}, xango.Text("×"))
 
 	var fired bool
-	renderer.On("close", "click", func(gox.Event) { fired = true })
+	renderer.On("close", "click", func(xango.Event) { fired = true })
 
 	frame := func() {
 		var ops op.Ops
@@ -557,7 +557,7 @@ func TestOnFiresForANodeWithNoAttrHandler(t *testing.T) {
 }
 
 // TestOnLosesToANodesOwnAttrHandler confirms On is purely additive: a
-// node that DOES carry its own Attr handler (gox.On, the mechanism
+// node that DOES carry its own Attr handler (xango.On, the mechanism
 // gio-counter-demo's Counter uses) keeps using it, unaffected by an
 // On registration for the same id -- so adding ID-based delegation
 // couldn't have changed gio-counter-demo's own existing behavior.
@@ -571,11 +571,11 @@ func TestOnLosesToANodesOwnAttrHandler(t *testing.T) {
 	th := material.NewTheme()
 	renderer := New()
 	var attrFired, registeredFired bool
-	node := gox.El("button", []gox.Attr{
-		gox.A("id", "dec"),
-		gox.On("click", func(gox.Event) { attrFired = true }),
-	}, gox.Text("-"))
-	renderer.On("dec", "click", func(gox.Event) { registeredFired = true })
+	node := xango.El("button", []xango.Attr{
+		xango.A("id", "dec"),
+		xango.On("click", func(xango.Event) { attrFired = true }),
+	}, xango.Text("-"))
+	renderer.On("dec", "click", func(xango.Event) { registeredFired = true })
 
 	frame := func() {
 		var ops op.Ops
@@ -627,13 +627,13 @@ func TestDivWithClickHandlerFiresThroughRealClick(t *testing.T) {
 
 	th := material.NewTheme()
 	renderer := New()
-	node := gox.El("div", []gox.Attr{gox.A("id", "comment-text-c1")},
-		gox.Text("hi "),
-		gox.El("span", []gox.Attr{gox.A("class", "comment-mention")}, gox.Text("@sam")),
+	node := xango.El("div", []xango.Attr{xango.A("id", "comment-text-c1")},
+		xango.Text("hi "),
+		xango.El("span", []xango.Attr{xango.A("class", "comment-mention")}, xango.Text("@sam")),
 	)
 
 	var fired bool
-	renderer.On("comment-text-c1", "click", func(gox.Event) { fired = true })
+	renderer.On("comment-text-c1", "click", func(xango.Event) { fired = true })
 
 	frame := func() {
 		var ops op.Ops
@@ -678,7 +678,7 @@ func TestDivWithNoClickHandlerStaysPlain(t *testing.T) {
 
 	th := material.NewTheme()
 	renderer := New()
-	node := gox.El("div", []gox.Attr{gox.A("id", "plain")}, gox.Text("just text"))
+	node := xango.El("div", []xango.Attr{xango.A("id", "plain")}, xango.Text("just text"))
 
 	var ops op.Ops
 	var router input.Router
@@ -718,12 +718,12 @@ func TestFocusFiresOnChangeWithoutAnyPointerClick(t *testing.T) {
 	renderer := New()
 	var fired bool
 	var lastValue string
-	node := gox.El("input", []gox.Attr{
-		gox.A("type", "text"),
-		gox.A("id", "name"),
-		gox.On("change", func(e gox.Event) {
+	node := xango.El("input", []xango.Attr{
+		xango.A("type", "text"),
+		xango.A("id", "name"),
+		xango.On("change", func(e xango.Event) {
 			fired = true
-			lastValue = gox.EventValue[string](e)
+			lastValue = xango.EventValue[string](e)
 		}),
 	})
 
@@ -779,10 +779,10 @@ func TestSetValueSeedsBeforeFirstLayout(t *testing.T) {
 
 	th := material.NewTheme()
 	renderer := New()
-	node := gox.El("input", []gox.Attr{
-		gox.A("type", "text"),
-		gox.A("id", "margin-top"),
-		gox.A("value", "1.0"),
+	node := xango.El("input", []xango.Attr{
+		xango.A("type", "text"),
+		xango.A("id", "margin-top"),
+		xango.A("value", "1.0"),
 	})
 
 	renderer.SetValue("margin-top", "1.25")
@@ -824,10 +824,10 @@ func TestSetValueReseedsAnExistingEditor(t *testing.T) {
 
 	th := material.NewTheme()
 	renderer := New()
-	node := gox.El("input", []gox.Attr{
-		gox.A("type", "text"),
-		gox.A("id", "margin-top"),
-		gox.A("value", "1.0"),
+	node := xango.El("input", []xango.Attr{
+		xango.A("type", "text"),
+		xango.A("id", "margin-top"),
+		xango.A("value", "1.0"),
 	})
 
 	var router input.Router
@@ -888,10 +888,10 @@ func TestToggleFiresOnChangeWithoutAnyPointerClick(t *testing.T) {
 	renderer := New()
 	var fired bool
 	var lastChecked bool
-	node := gox.El("input", []gox.Attr{
-		gox.A("type", "checkbox"),
-		gox.A("id", "agree"),
-		gox.On("change", func(e gox.Event) {
+	node := xango.El("input", []xango.Attr{
+		xango.A("type", "checkbox"),
+		xango.A("id", "agree"),
+		xango.On("change", func(e xango.Event) {
 			fired = true
 			lastChecked = e.Checked
 		}),
@@ -947,10 +947,10 @@ func TestSetCheckedSeedsBeforeFirstLayoutAndDoesNotFireOnChange(t *testing.T) {
 	th := material.NewTheme()
 	renderer := New()
 	var fired bool
-	node := gox.El("input", []gox.Attr{
-		gox.A("type", "checkbox"),
-		gox.A("id", "dark-theme"),
-		gox.On("change", func(gox.Event) { fired = true }),
+	node := xango.El("input", []xango.Attr{
+		xango.A("type", "checkbox"),
+		xango.A("id", "dark-theme"),
+		xango.On("change", func(xango.Event) { fired = true }),
 	})
 
 	renderer.SetChecked("dark-theme", true)
@@ -994,9 +994,9 @@ func TestSetCheckedReseedsAnExistingCheckbox(t *testing.T) {
 
 	th := material.NewTheme()
 	renderer := New()
-	node := gox.El("input", []gox.Attr{
-		gox.A("type", "checkbox"),
-		gox.A("id", "dark-theme"),
+	node := xango.El("input", []xango.Attr{
+		xango.A("type", "checkbox"),
+		xango.A("id", "dark-theme"),
 	})
 
 	var router input.Router
@@ -1035,9 +1035,9 @@ func TestSetCheckedReseedsAnExistingCheckbox(t *testing.T) {
 }
 
 // TestSpanWithElementChildrenLaysOutThoseChildren covers a real bug
-// found while wiring OnDesign's own toolbar.gox on native: a <span>
+// found while wiring OnDesign's own toolbar.xg on native: a <span>
 // (or <p>) whose children include a real element, not just text --
-// toolbar.gox's own "font-picker-wrap" span wraps a button plus a
+// toolbar.xg's own "font-picker-wrap" span wraps a button plus a
 // hidden div, exactly this shape -- used to render as an empty
 // material.Label (textOf only concatenates KindText children, silently
 // dropping element children), so nothing inside such a span/p was ever
@@ -1055,8 +1055,8 @@ func TestSpanWithElementChildrenLaysOutThoseChildren(t *testing.T) {
 
 	th := material.NewTheme()
 	renderer := New()
-	node := gox.El("span", []gox.Attr{gox.A("class", "wrap")},
-		gox.El("button", []gox.Attr{gox.A("id", "inner")}, gox.Text("Click me")),
+	node := xango.El("span", []xango.Attr{xango.A("class", "wrap")},
+		xango.El("button", []xango.Attr{xango.A("id", "inner")}, xango.Text("Click me")),
 	)
 
 	var ops op.Ops
@@ -1082,7 +1082,7 @@ func TestSpanWithElementChildrenLaysOutThoseChildren(t *testing.T) {
 
 // TestIconButtonRendersRealIconContentAndClicks proves layoutButton's
 // own icon-content path (task #107, Phase 41): a button shaped like
-// editor/ui/toolbar.gox's own iconBtn -- a real <span> icon child plus
+// editor/ui/toolbar.xg's own iconBtn -- a real <span> icon child plus
 // an empty text label, the exact shape textOf(n) alone would silently
 // reduce to "" -- actually paints something (a real frame diff against
 // a blank button of the same size, the same rigor
@@ -1099,7 +1099,7 @@ func TestIconButtonRendersRealIconContentAndClicks(t *testing.T) {
 
 	th := material.NewTheme()
 
-	frame := func(node gox.Node) (*image.RGBA, *Renderer) {
+	frame := func(node xango.Node) (*image.RGBA, *Renderer) {
 		renderer := New()
 		var ops op.Ops
 		var router input.Router
@@ -1120,11 +1120,11 @@ func TestIconButtonRendersRealIconContentAndClicks(t *testing.T) {
 		return img, renderer
 	}
 
-	blankBtn := gox.El("button", []gox.Attr{gox.A("id", "icon-btn")}, gox.Text(""))
+	blankBtn := xango.El("button", []xango.Attr{xango.A("id", "icon-btn")}, xango.Text(""))
 	blank, _ := frame(blankBtn)
 
-	iconSpan := gox.El("span", []gox.Attr{gox.A("class", "material-symbols-outlined")}, gox.Text("bold"))
-	iconBtn := gox.El("button", []gox.Attr{gox.A("id", "icon-btn")}, iconSpan, gox.Text(""))
+	iconSpan := xango.El("span", []xango.Attr{xango.A("class", "material-symbols-outlined")}, xango.Text("bold"))
+	iconBtn := xango.El("button", []xango.Attr{xango.A("id", "icon-btn")}, iconSpan, xango.Text(""))
 	got, renderer := frame(iconBtn)
 
 	if bytes.Equal(blank.Pix, got.Pix) {
@@ -1153,11 +1153,11 @@ func TestIconButtonExposesAccessibleNameViaSemanticDescription(t *testing.T) {
 
 	th := material.NewTheme()
 	renderer := New()
-	iconSpan := gox.El("span", []gox.Attr{gox.A("class", "material-symbols-outlined")}, gox.Text("format_bold"))
-	node := gox.El("button", []gox.Attr{
-		gox.A("id", "bold-btn"),
-		gox.A("title", "Bold"),
-	}, iconSpan, gox.Text(""))
+	iconSpan := xango.El("span", []xango.Attr{xango.A("class", "material-symbols-outlined")}, xango.Text("format_bold"))
+	node := xango.El("button", []xango.Attr{
+		xango.A("id", "bold-btn"),
+		xango.A("title", "Bold"),
+	}, iconSpan, xango.Text(""))
 
 	var ops op.Ops
 	var router input.Router

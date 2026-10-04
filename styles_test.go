@@ -1,4 +1,4 @@
-package gox
+package xango
 
 import (
 	"strings"
@@ -28,7 +28,7 @@ func TestRegisterStyle(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := `<style data-gox-style="a/one.css">a{color:red}</style><style data-gox-style="a/two.css">b{color:blue}</style>`
+	want := `<style data-xango-style="a/one.css">a{color:red}</style><style data-xango-style="a/two.css">b{color:blue}</style>`
 	if html != want {
 		t.Errorf("Styles() = %q", html)
 	}

@@ -1,10 +1,10 @@
-// Tokenizes every *.gox file under the repo's examples/ with the real
-// gox grammar (base + tag injection) layered on VS Code's own Go
+// Tokenizes every *.xg file under the repo's examples/ with the real
+// xango grammar (base + tag injection) layered on VS Code's own Go
 // grammar, and checks that Go keywords and (where the source actually
-// has tags) entity.name.tag.gox tokens both show up -- including deep
+// has tags) entity.name.tag.xg tokens both show up -- including deep
 // inside nested blocks/loops, which is exactly the case a naive
 // top-level {include:"#tag"} pattern list fails at silently (see the
-// comment in ../syntaxes/gox.tmLanguage.json).
+// comment in ../syntaxes/xango.tmLanguage.json).
 const fs = require("fs");
 const path = require("path");
 const oniguruma = require("vscode-oniguruma");
@@ -14,12 +14,12 @@ const REPO_ROOT = path.join(__dirname, "..", "..", "..");
 const SYNTAXES_DIR = path.join(__dirname, "..", "syntaxes");
 const GO_GRAMMAR_PATH = path.join(__dirname, "go.tmLanguage.json");
 
-function findGoxFiles(dir) {
+function findXgFiles(dir) {
   let out = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) out = out.concat(findGoxFiles(full));
-    else if (entry.name.endsWith(".gox")) out.push(full);
+    if (entry.isDirectory()) out = out.concat(findXgFiles(full));
+    else if (entry.name.endsWith(".xg")) out.push(full);
   }
   return out;
 }
@@ -38,24 +38,24 @@ async function main() {
   };
 
   const goGrammar = JSON.parse(fs.readFileSync(GO_GRAMMAR_PATH, "utf8"));
-  const goxBase = JSON.parse(fs.readFileSync(path.join(SYNTAXES_DIR, "gox.tmLanguage.json"), "utf8"));
-  const goxInjection = JSON.parse(fs.readFileSync(path.join(SYNTAXES_DIR, "gox-tags.tmLanguage.json"), "utf8"));
+  const xangoBase = JSON.parse(fs.readFileSync(path.join(SYNTAXES_DIR, "xango.tmLanguage.json"), "utf8"));
+  const xgInjection = JSON.parse(fs.readFileSync(path.join(SYNTAXES_DIR, "xango-tags.tmLanguage.json"), "utf8"));
 
   const registry = new vsctm.Registry({
     onigLib: Promise.resolve(onigLib),
     loadGrammar: async (scopeName) => {
       if (scopeName === "source.go") return goGrammar;
-      if (scopeName === "source.gox") return goxBase;
-      if (scopeName === "gox.tags.injection") return goxInjection;
+      if (scopeName === "source.xg") return xangoBase;
+      if (scopeName === "xango.tags.injection") return xgInjection;
       return null;
     },
-    getInjections: (scopeName) => (scopeName === "source.gox" ? ["gox.tags.injection"] : undefined),
+    getInjections: (scopeName) => (scopeName === "source.xg" ? ["xango.tags.injection"] : undefined),
   });
 
-  const grammar = await registry.loadGrammar("source.gox");
-  const files = findGoxFiles(path.join(REPO_ROOT, "examples"));
+  const grammar = await registry.loadGrammar("source.xg");
+  const files = findXgFiles(path.join(REPO_ROOT, "examples"));
   if (files.length === 0) {
-    console.error("no .gox files found under examples/");
+    console.error("no .xg files found under examples/");
     process.exit(1);
   }
 
@@ -77,7 +77,7 @@ async function main() {
       }
       for (const t of result.tokens) {
         const scopes = t.scopes.join(" ");
-        if (scopes.includes("entity.name.tag.gox")) tagCount++;
+        if (scopes.includes("entity.name.tag.xg")) tagCount++;
         if (scopes.includes("keyword")) keywordCount++;
       }
       ruleStack = result.ruleStack;

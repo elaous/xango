@@ -1,8 +1,8 @@
-// Package gox is the runtime for gojiberry components: a renderer-agnostic
+// Package xango is the runtime for gojiberry components: a renderer-agnostic
 // Node tree that can be walked to produce HTML (server-side) or to drive
-// real DOM nodes (client-side, see domrt). Generated code from .gox files
+// real DOM nodes (client-side, see domrt). Generated code from .xg files
 // targets this package's constructors.
-package gox
+package xango
 
 // Kind discriminates the variants of Node.
 type Kind int
@@ -46,8 +46,8 @@ type EventHandler func(Event)
 // Value carries whatever data the event has attached (a string for
 // input/change events, a float64 for a range slider, a custom type for
 // an application-defined event), erased to any so a single, non-generic
-// Event can be stored in a plain gox.Attr and mixed into a homogeneous
-// []gox.Attr. Use EventValue[T] for a type-safe read.
+// Event can be stored in a plain xango.Attr and mixed into a homogeneous
+// []xango.Attr. Use EventValue[T] for a type-safe read.
 type Event struct {
 	Type           string
 	Value          any
@@ -84,7 +84,7 @@ func NewEvent(typ string, value any, checked bool, preventDefault, stopProp func
 }
 
 // El constructs an element node. attrs may be nil. Generated code from
-// .gox files targets this for every lowercase (HTML) tag.
+// .xg files targets this for every lowercase (HTML) tag.
 func El(tag string, attrs []Attr, children ...Node) Node {
 	return Node{Kind: KindElement, Tag: tag, Attrs: attrs, Children: children}
 }
@@ -111,7 +111,7 @@ func On(name string, handler EventHandler) Attr {
 }
 
 // Key returns a copy of n with its reconciliation key set, for use in
-// keyed lists: gox.El("li", nil, gox.Text(item)).WithKey(item.ID).
+// keyed lists: xango.El("li", nil, xango.Text(item)).WithKey(item.ID).
 func (n Node) WithKey(key string) Node {
 	n.Key = key
 	return n
@@ -120,9 +120,9 @@ func (n Node) WithKey(key string) Node {
 // Host constructs a node for a renderer-specific component: tag names it
 // (for example "canvas.TextFlow"), props is its typed props value (any
 // Go type -- slices, structs, functions), and children are its child
-// nodes. Only a renderer that knows the tag can draw it (canvas/gox draws
+// nodes. Only a renderer that knows the tag can draw it (canvas/xango draws
 // the canvas components); the HTML renderer reports an error, and domrt
-// and goxgio draw nothing.
+// and xangogio draw nothing.
 func Host(tag string, props any, children ...Node) Node {
 	return Node{Kind: KindHost, Tag: tag, Props: props, Children: children}
 }

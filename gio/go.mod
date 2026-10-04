@@ -1,4 +1,4 @@
-module github.com/elaous/gojiberry/goxgio
+module github.com/elaous/gojiberry/xangogio
 
 go 1.26.0
 

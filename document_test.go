@@ -1,4 +1,4 @@
-package gox
+package xango
 
 import (
 	"strings"
@@ -7,7 +7,7 @@ import (
 
 func TestDocumentRender(t *testing.T) {
 	doc := Document{
-		Title: "gox-canvas",
+		Title: "xango-canvas",
 		Head:  []Node{Style("body{color:red}")},
 		Body:  El("h1", nil, Text("Hello")),
 	}
@@ -15,7 +15,7 @@ func TestDocumentRender(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := `<html><head><title>gox-canvas</title><style>body{color:red}</style></head><body><h1>Hello</h1></body></html>`
+	want := `<html><head><title>xango-canvas</title><style>body{color:red}</style></head><body><h1>Hello</h1></body></html>`
 	if got != want {
 		t.Errorf("got  %s\nwant %s", got, want)
 	}

@@ -1,9 +1,9 @@
-// Package goxgio is a third gox.Node renderer, alongside gox.Render
-// (server-side HTML, see gox/render.go) and domrt.Mount/Update
+// Package xangogio is a third xango.Node renderer, alongside xango.Render
+// (server-side HTML, see xango/render.go) and domrt.Mount/Update
 // (client-side DOM patching, see ../../../domrt/domrt.go): it walks the
 // exact same renderer-agnostic tree onto a real Gio window
 // (gioui.org), so a native desktop/mobile target is a genuinely new
-// consumer of gox.Node rather than a rewrite of it.
+// consumer of xango.Node rather than a rewrite of it.
 //
 // Two things distinguish this walk from the other two renderers, both
 // forced by Gio being an immediate-mode toolkit rather than a retained
@@ -12,7 +12,7 @@
 //   - No differ. domrt keeps the previous tree around to compute a
 //     minimal patch; Gio repaints everything every frame anyway, so
 //     Renderer.Layout is a plain recursive walk, structurally closer to
-//     gox.Render than to domrt's patch algorithm.
+//     xango.Render than to domrt's patch algorithm.
 //   - Interactive-widget identity. A Gio widget.Clickable must persist
 //     across frames (Gio reads its accumulated click state off the
 //     struct itself), but the Node tree is rebuilt from scratch on
@@ -21,7 +21,7 @@
 //     (the same field domrt already uses for keyed-list
 //     reconciliation), else the element's "id" attribute -- id is the
 //     more common case for a single static control like a lone button,
-//     since .gox's tag syntax has no inline way to chain .WithKey onto
+//     since .xg's tag syntax has no inline way to chain .WithKey onto
 //     an element the way hand-written Go can. A button with neither
 //     Key nor id shares Gio's zero-value "" identity with every other
 //     such button and will misattribute clicks between them; callers
@@ -53,22 +53,22 @@
 // needs; a real HTML textarea's *rows*/*cols* sizing hint has no Gio
 // equivalent and is ignored, same as every other unmapped attribute
 // here. Growing beyond this tag set (Modal, ...) means adding to
-// typeset below, the same way domrt or gox.Render would grow to
+// typeset below, the same way domrt or xango.Render would grow to
 // support a new HTML element.
 //
-// Two ways to wire interactivity are supported, because real gox
-// producers use both: a node's own Attr handler (gox.On("click", h),
+// Two ways to wire interactivity are supported, because real xango
+// producers use both: a node's own Attr handler (xango.On("click", h),
 // read by clickHandler/changeHandler -- what gio-counter-demo's own
 // Counter uses), and Renderer.On(id, event, fn), an ID-based registry
 // checked as a fallback when a node has no Attr handler of its own.
-// The latter exists because OnDesign's real editor/ui/*.gox components
-// use neither gox.On nor any prop for interactivity: main.gox's own
+// The latter exists because OnDesign's real editor/ui/*.xg components
+// use neither xango.On nor any prop for interactivity: main.xg's own
 // wire() attaches every handler externally, by element ID
 // (ed.on(id, event, fn) -> a real DOM addEventListener), the same
 // delegation pattern domrt itself is built on. On lets a caller
-// replicate that same wiring against a gox.Node tree it doesn't
+// replicate that same wiring against a xango.Node tree it doesn't
 // control the construction of, with zero changes to the component.
-package goxgio
+package xangogio
 
 import (
 	"image"
@@ -86,7 +86,7 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
-	"github.com/elaous/gojiberry/gox"
+	"github.com/elaous/gojiberry/xango"
 )
 
 // ClassStyle is one class's worth of Gio-mappable styling: the narrow
@@ -123,8 +123,8 @@ type ClassStyle struct {
 	Alignment layout.Alignment
 }
 
-// Renderer walks gox.Node trees onto a Gio layout.Context. It is not
-// safe for concurrent use, matching domrt.Root and gox.Render's own
+// Renderer walks xango.Node trees onto a Gio layout.Context. It is not
+// safe for concurrent use, matching domrt.Root and xango.Render's own
 // single-goroutine assumption.
 type Renderer struct {
 	clickables map[string]*widget.Clickable
@@ -172,9 +172,9 @@ type Renderer struct {
 	// handlers holds ID-based event handlers registered via On, keyed
 	// by "<id>\x00<event>" (the same flat key shape layoutSelect
 	// already uses for "<select id>\x00<option value>"). See On's own
-	// doc comment for why this exists alongside gox.On/Attr.Handler
+	// doc comment for why this exists alongside xango.On/Attr.Handler
 	// rather than replacing it.
-	handlers map[string]gox.EventHandler
+	handlers map[string]xango.EventHandler
 
 	// Styles maps a class name (as it appears in a node's "class"
 	// attribute, one word) to the styling to apply wherever that class
@@ -210,7 +210,7 @@ func New() *Renderer {
 		toggleRequests:  make(map[string]bool),
 		valueRequests:   make(map[string]string),
 		checkedRequests: make(map[string]bool),
-		handlers:        make(map[string]gox.EventHandler),
+		handlers:        make(map[string]xango.EventHandler),
 	}
 }
 
@@ -284,7 +284,7 @@ func (r *Renderer) SetChecked(id string, checked bool) {
 // pointer.Event hitting the widget's own laid-out bounds, which means
 // knowing exactly where those bounds fall inside a caller's own
 // layout -- trivial for a single isolated input, much less so for one
-// buried inside a larger tree like a real editor/ui/*.gox panel.
+// buried inside a larger tree like a real editor/ui/*.xg panel.
 // Reports whether an editor with that identity has been laid out at
 // least once (and so has something to focus); if not, id is not
 // remembered, matching Click's own "nothing registered yet" contract.
@@ -323,40 +323,40 @@ func (r *Renderer) EditorTag(id string) (event.Tag, bool) {
 // uses). Registering the same id+event again replaces the previous
 // handler.
 //
-// This exists alongside gox.On/Attr.Handler (the per-node handler
+// This exists alongside xango.On/Attr.Handler (the per-node handler
 // clickHandler/changeHandler already read, and the only mechanism
 // gio-counter-demo's own Counter uses) rather than replacing it,
-// because real OnDesign editor/ui/*.gox components use neither: their
-// interactivity is wired entirely externally, by ID, in main.gox's own
+// because real OnDesign editor/ui/*.xg components use neither: their
+// interactivity is wired entirely externally, by ID, in main.xg's own
 // wire() (ed.on(id, event, fn) -> element(id).AddEventListener(...)),
 // the same DOM-delegation pattern domrt itself is built on. A node's
 // own Attr handler (if any) always takes precedence over a handler
 // registered here, so gio-counter-demo's existing per-node wiring is
 // unaffected; On is purely additive, for callers whose tree has
 // nothing attached at the node itself.
-func (r *Renderer) On(id, event string, fn gox.EventHandler) {
+func (r *Renderer) On(id, event string, fn xango.EventHandler) {
 	r.handlers[id+"\x00"+event] = fn
 }
 
 // handlerFor returns the handler registered via On for id+event, or
 // nil if none was.
-func (r *Renderer) handlerFor(id, event string) gox.EventHandler {
+func (r *Renderer) handlerFor(id, event string) xango.EventHandler {
 	return r.handlers[id+"\x00"+event]
 }
 
 // Layout walks n and lays it out via th, returning its dimensions. Call
 // this once per Gio frame with a freshly rendered n (the same
-// "render(state) -> gox.Node" shape every other gox consumer uses), not
+// "render(state) -> xango.Node" shape every other xango consumer uses), not
 // with a diffed/patched tree -- there's nothing to patch here.
-func (r *Renderer) Layout(gtx layout.Context, th *material.Theme, n gox.Node) layout.Dimensions {
+func (r *Renderer) Layout(gtx layout.Context, th *material.Theme, n xango.Node) layout.Dimensions {
 	switch n.Kind {
-	case gox.KindText:
+	case xango.KindText:
 		return material.Label(th, th.TextSize, n.Text).Layout(gtx)
-	case gox.KindFragment:
+	case xango.KindFragment:
 		return r.layoutChildren(gtx, th, n.Children, layout.Vertical, layout.Start)
-	case gox.KindHost:
+	case xango.KindHost:
 		return layout.Dimensions{}
-	case gox.KindRaw:
+	case xango.KindRaw:
 		// No DOM to inject raw HTML into on a native target; render
 		// nothing rather than the markup as literal text.
 		return layout.Dimensions{}
@@ -371,7 +371,7 @@ func (r *Renderer) Layout(gtx layout.Context, th *material.Theme, n gox.Node) la
 		}
 	case "span", "p":
 		if hasElementChild(n) {
-			// A span/p wrapping real element children (e.g. toolbar.gox's
+			// A span/p wrapping real element children (e.g. toolbar.xg's
 			// own "font-picker-wrap" span, a button plus a hidden div),
 			// not just text -- textOf/material.Label would silently
 			// discard those children entirely (textOf only concatenates
@@ -419,7 +419,7 @@ func (r *Renderer) Layout(gtx layout.Context, th *material.Theme, n gox.Node) la
 
 // classesOf splits n's "class" attribute on whitespace, the same
 // multi-class convention a real HTML class attribute uses.
-func classesOf(n gox.Node) []string {
+func classesOf(n xango.Node) []string {
 	for _, a := range n.Attrs {
 		if a.Name == "class" {
 			return strings.Fields(a.Value)
@@ -430,7 +430,7 @@ func classesOf(n gox.Node) []string {
 
 // hasClass reports whether n's own "class" attribute contains class as
 // one of its space-separated words.
-func hasClass(n gox.Node, class string) bool {
+func hasClass(n xango.Node, class string) bool {
 	for _, c := range classesOf(n) {
 		if c == class {
 			return true
@@ -444,7 +444,7 @@ func hasClass(n gox.Node, class string) bool {
 // merge rule). A node with no matching class, or a nil Styles map,
 // returns the zero ClassStyle -- a guaranteed no-op, see ClassStyle's
 // own doc comment.
-func (r *Renderer) styleOf(n gox.Node) ClassStyle {
+func (r *Renderer) styleOf(n xango.Node) ClassStyle {
 	var merged ClassStyle
 	for _, class := range classesOf(n) {
 		s, ok := r.Styles[class]
@@ -520,7 +520,7 @@ func paintBox(gtx layout.Context, size image.Point, style ClassStyle) {
 
 // idOf returns n's "id" attribute, the widget-identity fallback used
 // when Node.Key is empty (see Renderer's doc comment).
-func idOf(n gox.Node) string {
+func idOf(n xango.Node) string {
 	for _, a := range n.Attrs {
 		if a.Name == "id" {
 			return a.Value
@@ -529,7 +529,7 @@ func idOf(n gox.Node) string {
 	return ""
 }
 
-func axisOf(n gox.Node) layout.Axis {
+func axisOf(n xango.Node) layout.Axis {
 	for _, a := range n.Attrs {
 		if a.Name == "data-axis" && a.Value == "horizontal" {
 			return layout.Horizontal
@@ -544,29 +544,29 @@ func axisOf(n gox.Node) layout.Axis {
 // needs the layoutChildren path instead, or they'd never be laid out
 // (and, if interactive, never register a Clickable/etc. of their own)
 // at all.
-func hasElementChild(n gox.Node) bool {
+func hasElementChild(n xango.Node) bool {
 	for _, c := range n.Children {
-		if c.Kind != gox.KindText {
+		if c.Kind != xango.KindText {
 			return true
 		}
 	}
 	return false
 }
 
-// textOf concatenates n's direct KindText children, since a gox.El
+// textOf concatenates n's direct KindText children, since a xango.El
 // call like <span>{strconv.Itoa(props.Count)}</span> produces a single
 // text child, not a Text field on the span itself.
-func textOf(n gox.Node) string {
+func textOf(n xango.Node) string {
 	var b strings.Builder
 	for _, c := range n.Children {
-		if c.Kind == gox.KindText {
+		if c.Kind == xango.KindText {
 			b.WriteString(c.Text)
 		}
 	}
 	return b.String()
 }
 
-func (r *Renderer) layoutChildren(gtx layout.Context, th *material.Theme, children []gox.Node, axis layout.Axis, alignment layout.Alignment) layout.Dimensions {
+func (r *Renderer) layoutChildren(gtx layout.Context, th *material.Theme, children []xango.Node, axis layout.Axis, alignment layout.Alignment) layout.Dimensions {
 	flex := layout.Flex{Axis: axis, Alignment: alignment}
 	flexChildren := make([]layout.FlexChild, 0, len(children))
 	for _, c := range children {
@@ -579,10 +579,10 @@ func (r *Renderer) layoutChildren(gtx layout.Context, th *material.Theme, childr
 }
 
 // clickHandler returns n's onClick handler (the Attr named "click" with
-// a non-nil Handler, exactly as gox.On("click", h) and domrt both treat
+// a non-nil Handler, exactly as xango.On("click", h) and domrt both treat
 // it -- see transpile.go's eventNameFor and domrt.go's setListener), or
 // nil if n has none.
-func clickHandler(n gox.Node) gox.EventHandler {
+func clickHandler(n xango.Node) xango.EventHandler {
 	for _, a := range n.Attrs {
 		if a.Name == "click" && a.Handler != nil {
 			return a.Handler
@@ -616,11 +616,11 @@ func (r *Renderer) Click(id string) bool {
 // real click handler, so a structural div can be a genuine click
 // target too, not just button (see this file's own package doc
 // comment for why: a real DOM div with its own addEventListener is a
-// common shape real editor/ui/*.gox components use, e.g. comment.go's
+// common shape real editor/ui/*.xg components use, e.g. comment.go's
 // own #comment-item-<id> text div). A div with no click handler at all
 // returns exactly what layoutChildren always did, with no Clickable
 // ever created for it.
-func (r *Renderer) layoutDivContent(gtx layout.Context, th *material.Theme, n gox.Node, alignment layout.Alignment) layout.Dimensions {
+func (r *Renderer) layoutDivContent(gtx layout.Context, th *material.Theme, n xango.Node, alignment layout.Alignment) layout.Dimensions {
 	children := func(gtx layout.Context) layout.Dimensions {
 		return r.layoutChildren(gtx, th, n.Children, axisOf(n), alignment)
 	}
@@ -641,7 +641,7 @@ func (r *Renderer) layoutDivContent(gtx layout.Context, th *material.Theme, n go
 		r.clickables[id] = clk
 	}
 	for clk.Clicked(gtx) {
-		handler(gox.NewEvent("click", nil, false, nil, nil))
+		handler(xango.NewEvent("click", nil, false, nil, nil))
 	}
 	return clk.Layout(gtx, children)
 }
@@ -657,13 +657,13 @@ var buttonInset = layout.Inset{Top: 10, Bottom: 10, Left: 12, Right: 12}
 
 // accessibleNameOf returns n's "aria-label" attribute, falling back to
 // "title" -- the same accessible-name precedence order
-// editor/ui/toolbar.gox's own iconBtn/iconBtnNode doc comments already
+// editor/ui/toolbar.xg's own iconBtn/iconBtnNode doc comments already
 // establish for the web build ("title alone is an inconsistently-
 // honored accessible-name source across screen readers"): a real
 // screen reader's own accessible name for an icon-only button, whose
 // real visible content carries no useful text of its own for
 // textOf/material.Label to expose.
-func accessibleNameOf(n gox.Node) string {
+func accessibleNameOf(n xango.Node) string {
 	var title string
 	for _, a := range n.Attrs {
 		switch a.Name {
@@ -678,10 +678,10 @@ func accessibleNameOf(n gox.Node) string {
 
 // layoutButton renders n as a real material.Button -- textOf(n)'s own
 // direct-text-children concatenation is enough for a plain text button
-// (btn(), editor/ui/toolbar.gox), but silently drops any real element
+// (btn(), editor/ui/toolbar.xg), but silently drops any real element
 // child the same way the "span"/"p" cases' own hasElementChild check
 // already guards against elsewhere in this file: an icon button
-// (iconBtn(id, iconName, title, label), toolbar.gox) is
+// (iconBtn(id, iconName, title, label), toolbar.xg) is
 // <button><span class="material-symbols-outlined">iconName</span>
 // label</button> -- an icon span child plus (usually empty) label
 // text, so textOf(n) alone silently painted nothing for the icon at
@@ -698,7 +698,7 @@ func accessibleNameOf(n gox.Node) string {
 // (gioui.org/widget/material's own button.go), since Description, not
 // Label, is the real Gio convention for a control whose accessible name
 // comes from something other than its own painted text.
-func (r *Renderer) layoutButton(gtx layout.Context, th *material.Theme, n gox.Node) layout.Dimensions {
+func (r *Renderer) layoutButton(gtx layout.Context, th *material.Theme, n xango.Node) layout.Dimensions {
 	id := n.Key
 	if id == "" {
 		id = idOf(n)
@@ -714,7 +714,7 @@ func (r *Renderer) layoutButton(gtx layout.Context, th *material.Theme, n gox.No
 	}
 	if handler != nil {
 		for clk.Clicked(gtx) {
-			handler(gox.NewEvent("click", nil, false, nil, nil))
+			handler(xango.NewEvent("click", nil, false, nil, nil))
 		}
 	}
 	if !hasElementChild(n) {
@@ -736,7 +736,7 @@ func (r *Renderer) layoutButton(gtx layout.Context, th *material.Theme, n gox.No
 
 // inputType returns n's "type" attribute, defaulting to "text" the same
 // way a real <input> with no type attribute does.
-func inputType(n gox.Node) string {
+func inputType(n xango.Node) string {
 	for _, a := range n.Attrs {
 		if a.Name == "type" {
 			return a.Value
@@ -747,11 +747,11 @@ func inputType(n gox.Node) string {
 
 // valueOf returns n's "value" attribute. Only used to seed a newly
 // created widget.Editor: unlike domrt (which owns a real, persistent DOM
-// node it can read back at any time), goxgio has nothing to read a live
+// node it can read back at any time), xangogio has nothing to read a live
 // value from except the widget.Editor itself, so this is a one-time
 // initial value, not a live binding -- setting it on every Layout call
 // would stomp whatever the user just typed.
-func valueOf(n gox.Node) string {
+func valueOf(n xango.Node) string {
 	for _, a := range n.Attrs {
 		if a.Name == "value" {
 			return a.Value
@@ -763,7 +763,7 @@ func valueOf(n gox.Node) string {
 // checkedOf reports whether n's "checked" attribute is present, matching
 // the standard HTML boolean-attribute convention (presence, not value,
 // means true). Same seed-only caveat as valueOf.
-func checkedOf(n gox.Node) bool {
+func checkedOf(n xango.Node) bool {
 	for _, a := range n.Attrs {
 		if a.Name == "checked" {
 			return true
@@ -773,7 +773,7 @@ func checkedOf(n gox.Node) bool {
 }
 
 // placeholderOf returns n's "placeholder" attribute, if any.
-func placeholderOf(n gox.Node) string {
+func placeholderOf(n xango.Node) string {
 	for _, a := range n.Attrs {
 		if a.Name == "placeholder" {
 			return a.Value
@@ -785,7 +785,7 @@ func placeholderOf(n gox.Node) string {
 // changeHandler returns n's onChange handler (the Attr named "change"
 // with a non-nil Handler -- see eventNameFor in the transpiler), or nil
 // if n has none.
-func changeHandler(n gox.Node) gox.EventHandler {
+func changeHandler(n xango.Node) xango.EventHandler {
 	for _, a := range n.Attrs {
 		if a.Name == "change" && a.Handler != nil {
 			return a.Handler
@@ -811,7 +811,7 @@ func changeHandler(n gox.Node) gox.EventHandler {
 // reason (a widget's interaction state must be consumed exactly once
 // per frame to fire a handler, but the material wrapper always insists
 // on consuming it itself to paint correctly).
-func (r *Renderer) layoutInput(gtx layout.Context, th *material.Theme, n gox.Node) layout.Dimensions {
+func (r *Renderer) layoutInput(gtx layout.Context, th *material.Theme, n xango.Node) layout.Dimensions {
 	id := n.Key
 	if id == "" {
 		id = idOf(n)
@@ -839,7 +839,7 @@ func (r *Renderer) layoutInput(gtx layout.Context, th *material.Theme, n gox.Nod
 				handler = r.handlerFor(id, "change")
 			}
 			if handler != nil {
-				handler(gox.NewEvent("change", cb.Value, cb.Value, nil, nil))
+				handler(xango.NewEvent("change", cb.Value, cb.Value, nil, nil))
 			}
 		}
 		return material.CheckBox(th, cb, "").Layout(gtx)
@@ -875,7 +875,7 @@ func (r *Renderer) layoutInput(gtx layout.Context, th *material.Theme, n gox.Nod
 			handler = r.handlerFor(id, "change")
 		}
 		if handler != nil {
-			handler(gox.NewEvent("change", ed.Text(), false, nil, nil))
+			handler(xango.NewEvent("change", ed.Text(), false, nil, nil))
 		}
 	}
 	return material.Editor(th, ed, placeholderOf(n)).Layout(gtx)
@@ -884,7 +884,7 @@ func (r *Renderer) layoutInput(gtx layout.Context, th *material.Theme, n gox.Nod
 // selectedAttr reports whether n's "selected" attribute is present,
 // the same boolean-attribute convention checkedOf already uses for
 // "checked".
-func selectedAttr(n gox.Node) bool {
+func selectedAttr(n xango.Node) bool {
 	for _, a := range n.Attrs {
 		if a.Name == "selected" {
 			return true
@@ -897,7 +897,7 @@ func selectedAttr(n gox.Node) bool {
 // <option> child (the one with a "selected" attribute -- matching
 // OnDesign's own optSelected convention for the web renderer), or
 // ok=false if none is marked selected.
-func selectedOption(n gox.Node) (value, label string, ok bool) {
+func selectedOption(n xango.Node) (value, label string, ok bool) {
 	for _, c := range n.Children {
 		if c.Tag != "option" {
 			continue
@@ -912,7 +912,7 @@ func selectedOption(n gox.Node) (value, label string, ok bool) {
 // layoutSelect lays out a `<select id=...>{<option value=...
 // [selected]>label</option>...}</select>` as a custom dropdown --
 // gioui.org/widget/material has no native equivalent, so unlike every
-// other tag goxgio handles, this isn't a thin wrapper around an
+// other tag xangogio handles, this isn't a thin wrapper around an
 // existing material widget: a closed select is a material.Button
 // showing the selected option's own label; an open one is that same
 // button (now showing a "close" affordance) stacked above one more
@@ -921,8 +921,8 @@ func selectedOption(n gox.Node) (value, label string, ok bool) {
 //
 // Two things persist across frames here, both keyed by identity
 // (Node.Key if set, else the "id" attribute, matching every other
-// interactive tag goxgio handles): whether the dropdown is currently
-// open (r.selectOpen -- purely goxgio's own transient UI state, not
+// interactive tag xangogio handles): whether the dropdown is currently
+// open (r.selectOpen -- purely xangogio's own transient UI state, not
 // caller-controlled, since a real <select> doesn't expose "is the
 // dropdown open" as part of its own value either, so a plain
 // map[string]bool is the right shape, not a Gio widget type), and each
@@ -938,8 +938,8 @@ func selectedOption(n gox.Node) (value, label string, ok bool) {
 // different option marked selected once its own onChange handler
 // updates whatever state the selection represents -- the same
 // controlled-component contract domrt already holds every caller to,
-// not a new one goxgio invents.
-func (r *Renderer) layoutSelect(gtx layout.Context, th *material.Theme, n gox.Node) layout.Dimensions {
+// not a new one xangogio invents.
+func (r *Renderer) layoutSelect(gtx layout.Context, th *material.Theme, n xango.Node) layout.Dimensions {
 	id := n.Key
 	if id == "" {
 		id = idOf(n)
@@ -984,7 +984,7 @@ func (r *Renderer) layoutSelect(gtx layout.Context, th *material.Theme, n gox.No
 		for clk.Clicked(gtx) {
 			r.selectOpen[id] = false
 			if handler != nil {
-				handler(gox.NewEvent("change", value, false, nil, nil))
+				handler(xango.NewEvent("change", value, false, nil, nil))
 			}
 		}
 		rows = append(rows, layout.Rigid(material.Button(th, clk, optLabel).Layout))

@@ -1,4 +1,4 @@
-package gox
+package xango
 
 import (
 	"regexp"
@@ -49,7 +49,7 @@ func (d Document) Render() Node {
 	if !d.NoStyles {
 		for _, s := range RegisteredStyles() {
 			if styleWanted(s.ID, d.Styles) {
-				head = append(head, El("style", []Attr{A("data-gox-style", s.ID)}, Raw(styleEnd.ReplaceAllString(s.CSS, `<\/$1`))))
+				head = append(head, El("style", []Attr{A("data-xango-style", s.ID)}, Raw(styleEnd.ReplaceAllString(s.CSS, `<\/$1`))))
 			}
 		}
 	}
@@ -61,7 +61,7 @@ func (d Document) Render() Node {
 }
 
 // Style returns a <style> element injecting css verbatim -- e.g. the
-// string a gox CSS resource import binds -- for use in a Document's
+// string an xango CSS resource import binds -- for use in a Document's
 // Head. css is trusted content, but a "</style" inside it (in a string or a
 // comment) cannot end the element early: it is written as the equivalent
 // CSS escape "<\/style".

@@ -1,8 +1,8 @@
-package gox // import "github.com/elaous/gojiberry/gox"
+package xango // import "github.com/elaous/gojiberry/xango"
 
-Package gox is the runtime for gojiberry components: a renderer-agnostic Node
+Package xango is the runtime for gojiberry components: a renderer-agnostic Node
 tree that can be walked to produce HTML (server-side) or to drive real DOM nodes
-(client-side, see domrt). Generated code from .gox files targets this package's
+(client-side, see domrt). Generated code from .xg files targets this package's
 constructors.
 
 FUNCTIONS
@@ -66,7 +66,7 @@ type Event struct {
     Value carries whatever data the event has attached (a string for
     input/change events, a float64 for a range slider, a custom type for an
     application-defined event), erased to any so a single, non-generic Event
-    can be stored in a plain gox.Attr and mixed into a homogeneous []gox.Attr.
+    can be stored in a plain xango.Attr and mixed into a homogeneous []xango.Attr.
     Use EventValue[T] for a type-safe read.
 
 func NewEvent(typ string, value any, checked bool, preventDefault, stopProp func()) Event
@@ -110,7 +110,7 @@ func Child(v any) Node
     Fragment, nil renders nothing, and everything else is stringified as text.
 
 func El(tag string, attrs []Attr, children ...Node) Node
-    El constructs an element node. attrs may be nil. Generated code from .gox
+    El constructs an element node. attrs may be nil. Generated code from .xg
     files targets this for every lowercase (HTML) tag.
 
 func Frag(children ...Node) Node
@@ -124,7 +124,7 @@ func Raw(html string) Node
 
 func Style(css string) Node
     Style returns a <style> element injecting css verbatim -- e.g. the string
-    a gox CSS resource import binds -- for use in a Document's Head. css is
+    an xango CSS resource import binds -- for use in a Document's Head. css is
     trusted, unescaped content, same caveat as Raw.
 
 func Text(s string) Node
@@ -132,5 +132,5 @@ func Text(s string) Node
 
 func (n Node) WithKey(key string) Node
     Key returns a copy of n with its reconciliation key set, for use in keyed
-    lists: gox.El("li", nil, gox.Text(item)).WithKey(item.ID).
+    lists: xango.El("li", nil, xango.Text(item)).WithKey(item.ID).
 

@@ -1,4 +1,4 @@
-package goxgio
+package xangogio
 
 import "gioui.org/font"
 
@@ -21,7 +21,7 @@ import "gioui.org/font"
 // ligature substitution would, without needing GSUB support at all.
 type IconFont struct {
 	// Class is the span's own "class" attribute value this substitution
-	// applies to -- goxgio has no CSS, so there's no other way to tell
+	// applies to -- xangogio has no CSS, so there's no other way to tell
 	// "this span is an icon, not prose" the way the web build's own
 	// class-selector rule does.
 	Class string

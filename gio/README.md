@@ -1,11 +1,11 @@
-# goxgio
+# xangogio
 
-A third `gox.Node` renderer, alongside `gox.Render` (server-side HTML,
-see `../gox/render.go`) and `domrt.Mount`/`Update` (client-side DOM
+A third `xango.Node` renderer, alongside `xango.Render` (server-side HTML,
+see `../xango/render.go`) and `domrt.Mount`/`Update` (client-side DOM
 patching, see `../domrt/domrt.go`): it walks the exact same
 renderer-agnostic tree onto a real [Gio](https://gioui.org)
 (`gioui.org`) window, so a native desktop/mobile target is a genuinely
-new consumer of `gox.Node` rather than a rewrite of it.
+new consumer of `xango.Node` rather than a rewrite of it.
 
 It's a separate Go module (like `../examples/gio-counter-demo`, which
 depends on this one rather than defining it locally), `replace`-ing
@@ -17,7 +17,7 @@ piece in its own module.
 
 ## How it works
 
-`render.go`'s `Renderer.Layout` walks a `gox.Node` tree and lays it out
+`render.go`'s `Renderer.Layout` walks a `xango.Node` tree and lays it out
 via Gio's `layout`/`widget/material` packages. Two things distinguish
 this walk from the other two renderers, both forced by Gio being an
 immediate-mode toolkit rather than a retained DOM:
@@ -25,7 +25,7 @@ immediate-mode toolkit rather than a retained DOM:
 - **No differ.** `domrt` keeps the previous tree around to compute a
   minimal patch; Gio repaints everything every frame anyway, so
   `Renderer.Layout` is a plain recursive walk, structurally closer to
-  `gox.Render` than to `domrt`'s patch algorithm.
+  `xango.Render` than to `domrt`'s patch algorithm.
 - **Interactive-widget identity.** A Gio `widget.Clickable`/
   `widget.Bool`/`widget.Editor` must persist across frames (Gio reads
   accumulated interaction state off the struct itself), but the `Node`
@@ -58,11 +58,11 @@ contract `domrt` already holds every caller to.
 
 `Renderer.On(id, event, fn)` registers an ID-based event handler,
 checked as a fallback in `layoutButton`/`layoutInput`/`layoutSelect`
-whenever a node has no `Attr` handler of its own (`gox.On`, what
+whenever a node has no `Attr` handler of its own (`xango.On`, what
 `gio-counter-demo`'s `Counter` uses). This exists because real
-OnDesign `editor/ui/*.gox` components use neither `gox.On` nor any prop
+OnDesign `editor/ui/*.xg` components use neither `xango.On` nor any prop
 for interactivity -- their web build wires every handler externally, by
-element ID (`ed.on(id, event, fn)` in `main.gox`'s own `wire()`, calling
+element ID (`ed.on(id, event, fn)` in `main.xg`'s own `wire()`, calling
 a real DOM `addEventListener`), the same delegation pattern `domrt`
 itself is built on. `On` lets a caller replicate that wiring against an
 unmodified component's tree; a node's own `Attr` handler always wins
@@ -138,7 +138,7 @@ state:
   right value and the dropdown collapses back to its original size.
 - `TestOnFiresForANodeWithNoAttrHandler` / `TestOnLosesToANodesOwnAttrHandler`
   cover `Renderer.On`: a plain node with no `Attr` handler (the shape a
-  real `.gox` component takes) fires its registered handler on a real
+  real `.xg` component takes) fires its registered handler on a real
   click, and a node that does carry its own `Attr` handler keeps using
   it unaffected by an `On` registration for the same id.
 - `TestFocusFiresOnChangeWithoutAnyPointerClick` covers `Renderer.Focus`:
@@ -184,17 +184,17 @@ Add both a `require` and a `replace` pointing at this module, the same
 shape `examples/gio-counter-demo`'s own `go.mod` uses:
 
 ```
-require github.com/elaous/gojiberry/goxgio v0.0.0-00010101000000-000000000000
-replace github.com/elaous/gojiberry/goxgio => /path/to/gojiberry/goxgio
+require github.com/elaous/gojiberry/xangogio v0.0.0-00010101000000-000000000000
+replace github.com/elaous/gojiberry/xangogio => /path/to/gojiberry/xangogio
 ```
 
 ## Not yet done
 
-`goxgio` covers every tag `ui/*.gox` structurally needs, and (as of
+`xangogio` covers every tag `ui/*.xg` structurally needs, and (as of
 `Renderer.On`/`Renderer.Focus`) has a way to wire real interactivity
 -- including into a text field -- against an unmodified component too.
 `OnDesign/native` is now consuming all of it against real
-`editor/ui/*.gox` panels (see its own README) -- but only two panels
+`editor/ui/*.xg` panels (see its own README) -- but only two panels
 and a handful of wired controls, not a real app. Wiring `cssgen`'s
 output into that consumer is separate, not-yet-started work -- see
 OnDesign's own `docs/ROADMAP.md`, task #107, for the fuller picture.
