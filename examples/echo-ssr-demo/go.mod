@@ -6,7 +6,7 @@ replace github.com/elaous/xango => ../..
 
 require (
 	github.com/elaous/xango v0.1.0
-	github.com/labstack/echo/v4 v4.15.4
+	github.com/labstack/echo/v4 v4.16.3
 	golang.org/x/time v0.15.0
 )
 
