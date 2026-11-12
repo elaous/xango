@@ -564,7 +564,7 @@ func (p *parser) renderTag(name, typeArgs string, attrs []attr, children []child
 
 func (p *parser) renderElement(name string, attrs []attr, children []childNode) string {
 	var b strings.Builder
-	b.WriteString(fmt.Sprintf("xango.El(%s, ", strconv.Quote(name)))
+	fmt.Fprintf(&b, "xango.El(%s, ", strconv.Quote(name))
 	if len(attrs) == 0 {
 		b.WriteString("nil")
 	} else {
@@ -629,7 +629,7 @@ func (p *parser) renderComponent(name, typeArgs string, attrs []attr, children [
 		fields = append(fields, fmt.Sprintf("Children: []xango.Node{%s}", strings.Join(childExprs, ", ")))
 	}
 	var b strings.Builder
-	b.WriteString(fmt.Sprintf("%s%s(%s%s{%s})", callName, typeArgs, propsType, typeArgs, strings.Join(fields, ", ")))
+	fmt.Fprintf(&b, "%s%s(%s%s{%s})", callName, typeArgs, propsType, typeArgs, strings.Join(fields, ", "))
 	return b.String()
 }
 
