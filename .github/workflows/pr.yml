@@ -85,3 +85,66 @@ jobs:
         with:
           version: v2.15.0
           args: ./...
+
+  checks:
+    name: Format, generated files, docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Detect changes
+        id: changes
+        env:
+          BASE: origin/${{ github.base_ref }}
+        run: |
+          go=false
+          nested=false
+          while IFS= read -r -d '' file; do
+            case "$file" in
+              *.go | *.xg) go=true ;;
+            esac
+            dir=$(dirname "$file")
+            while [ "$dir" != "." ] && [ "$dir" != "/" ]; do
+              if [ -f "$dir/go.mod" ]; then
+                nested=true
+                break
+              fi
+              dir=$(dirname "$dir")
+            done
+          done < <(git diff -z --name-only --no-renames "$BASE...HEAD")
+          echo "go=$go" >> "$GITHUB_OUTPUT"
+          echo "nested=$nested" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          check-latest: true
+          cache-dependency-path: "**/go.sum"
+
+      - name: Check formatting
+        run: make fmt-check
+
+      - name: Check docs
+        if: steps.changes.outputs.go == 'true'
+        run: make docs docs-check
+
+      - name: Check generated files
+        if: steps.changes.outputs.go == 'true'
+        run: make generate generate-check
+
+      - name: Install golangci-lint
+        if: steps.changes.outputs.nested == 'true'
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.15.0
+          install-only: true
+
+      - name: Lint nested modules
+        if: steps.changes.outputs.nested == 'true'
+        run: make lint-modules
