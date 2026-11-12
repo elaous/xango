@@ -522,6 +522,10 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 	}
 	used := make([]bool, len(old))
 	anchors := followingAnchors(endAnchor, old)
+	skip := make([]int, len(old)+1)
+	for i := range skip {
+		skip[i] = i
+	}
 
 	result := make([]*renderedNode, len(next))
 	for i, n := range next {
@@ -538,7 +542,7 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 			anchor := anchors[matched]
 			// earlier siblings in this pass may have detached the anchor
 			if old[matched].firstNode().IsUndefined() && !anchor.IsUndefined() && !anchor.IsNull() && !anchor.Get("parentNode").Equal(parent) {
-				anchor = attachedAnchorAfter(parent, endAnchor, old[matched+1:])
+				anchor = attachedAnchorAfter(parent, endAnchor, old, skip, matched+1)
 			}
 			result[i] = patch(parent, anchor, old[matched], n)
 		} else {
@@ -589,13 +593,28 @@ func followingAnchors(endAnchor js.Value, old []*renderedNode) []js.Value {
 	return anchors
 }
 
-func attachedAnchorAfter(parent, endAnchor js.Value, following []*renderedNode) js.Value {
-	for _, o := range following {
-		if first := o.firstNode(); !first.IsUndefined() && first.Get("parentNode").Equal(parent) {
+func attachedAnchorAfter(parent, endAnchor js.Value, old []*renderedNode, skip []int, from int) js.Value {
+	i := findSkip(skip, from)
+	for i < len(old) {
+		first := old[i].firstNode()
+		if !first.IsUndefined() && first.Get("parentNode").Equal(parent) {
 			return first
 		}
+		skip[i] = i + 1
+		i = findSkip(skip, i+1)
 	}
 	return endAnchor
+}
+
+func findSkip(skip []int, i int) int {
+	root := i
+	for skip[root] != root {
+		root = skip[root]
+	}
+	for skip[i] != root {
+		skip[i], i = root, skip[i]
+	}
+	return root
 }
 
 func reverse(vs []js.Value) []js.Value {

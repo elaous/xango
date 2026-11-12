@@ -387,3 +387,33 @@ func TestManyEmptyFragmentsStayFast(t *testing.T) {
 		t.Fatalf("update took %.0fms", elapsed)
 	}
 }
+
+func TestManyDetachedAnchorsStayFast(t *testing.T) {
+	const count = 3000
+	tree := func(replaced bool) xango.Node {
+		fragments := make([]xango.Node, count)
+		siblings := make([]xango.Node, count)
+		for i := range fragments {
+			fragments[i] = xango.Frag().WithKey(fmt.Sprint("e", i))
+			tag := "p"
+			if replaced {
+				tag = "i"
+			}
+			siblings[i] = xango.El(tag, nil).WithKey(fmt.Sprint("r", i))
+		}
+		if replaced {
+			return xango.El("div", nil, append(siblings, fragments...)...)
+		}
+		return xango.El("div", nil, append(fragments, siblings...)...)
+	}
+	container := newContainer(t)
+	root := Mount(container, tree(false))
+	start := js.Global().Get("performance").Call("now").Float()
+	root.Update(tree(true))
+	if elapsed := js.Global().Get("performance").Call("now").Float() - start; elapsed > 1500 {
+		t.Fatalf("update took %.0fms", elapsed)
+	}
+	if got := container.Call("querySelectorAll", "i").Length(); got != count {
+		t.Fatalf("i elements = %d, want %d", got, count)
+	}
+}
