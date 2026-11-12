@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Vet and test only the packages and modules affected by changed files; full run for build-level changes.
+# Vet and test only affected packages and modules.
 # Usage: scripts/targeted-tests.sh [--list] [changed-file ...]
-# Without files, uses `git diff --name-only $BASE...HEAD` (BASE defaults to origin/main).
+# Without files, diffs against $BASE (default origin/main).
 set -euo pipefail
 
 list_only=0
