@@ -5,7 +5,7 @@ go 1.26.0
 replace github.com/elaous/xango => ../..
 
 require (
-	github.com/elaous/xango v0.0.0-00010101000000-000000000000
+	github.com/elaous/xango v0.1.0
 	github.com/gin-contrib/cors v1.7.7
 	github.com/gin-contrib/secure v1.1.3
 	github.com/gin-gonic/gin v1.12.0

@@ -8,8 +8,8 @@ replace github.com/elaous/xango/gio => ../../gio
 
 require (
 	gioui.org v0.10.1
-	github.com/elaous/xango v0.0.0-00010101000000-000000000000
-	github.com/elaous/xango/gio v0.0.0-00010101000000-000000000000
+	github.com/elaous/xango v0.1.0
+	github.com/elaous/xango/gio v0.1.0
 )
 
 require (
