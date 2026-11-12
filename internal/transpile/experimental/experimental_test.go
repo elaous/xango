@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/elaous/gojiberry/internal/transpile"
+	"github.com/elaous/xango/internal/transpile"
 )
 
 func setupModule(t *testing.T) (pkgDir string) {

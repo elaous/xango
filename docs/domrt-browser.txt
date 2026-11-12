@@ -1,4 +1,4 @@
-package browser // import "github.com/elaous/gojiberry/domrt/browser"
+package browser // import "github.com/elaous/xango/domrt/browser"
 
 
 CONSTANTS

@@ -1,4 +1,4 @@
-package svg // import "github.com/elaous/gojiberry/domrt/svg"
+package svg // import "github.com/elaous/xango/domrt/svg"
 
 
 CONSTANTS

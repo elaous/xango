@@ -11,7 +11,7 @@ import (
 	"gioui.org/op"
 	"gioui.org/widget/material"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 func TestIconFontTranslatesRecognizedSpanTextToASingleGlyph(t *testing.T) {

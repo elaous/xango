@@ -8,8 +8,8 @@ import (
 	"syscall/js"
 	"time"
 
-	"github.com/elaous/gojiberry/domrt"
-	"github.com/elaous/gojiberry/domrt/html"
+	"github.com/elaous/xango/domrt"
+	"github.com/elaous/xango/domrt/html"
 )
 
 // Global returns the named global browser API object.

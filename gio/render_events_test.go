@@ -7,7 +7,7 @@ import (
 	"gioui.org/layout"
 	"gioui.org/op"
 	"gioui.org/widget/material"
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 	"image"
 	"testing"
 )

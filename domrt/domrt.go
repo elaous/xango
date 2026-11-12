@@ -6,7 +6,7 @@ import (
 	"strings"
 	"syscall/js"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 func document() js.Value { return js.Global().Get("document") }

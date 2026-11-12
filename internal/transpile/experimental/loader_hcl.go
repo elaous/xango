@@ -10,7 +10,7 @@ import (
 
 	"github.com/hashicorp/hcl/v2/hclsimple"
 
-	"github.com/elaous/gojiberry/internal/transpile"
+	"github.com/elaous/xango/internal/transpile"
 )
 
 type hclSchema struct {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 type GreetingProps struct {

@@ -10,7 +10,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/elaous/gojiberry/internal/transpile"
+	"github.com/elaous/xango/internal/transpile"
 )
 
 type sqlcConfig struct {

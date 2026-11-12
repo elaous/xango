@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"syscall/js"
 
-	"github.com/elaous/gojiberry/domrt"
+	"github.com/elaous/xango/domrt"
 )
 
 type FetchTransport struct{}

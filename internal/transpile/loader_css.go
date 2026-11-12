@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const xangoImportPath = "github.com/elaous/gojiberry/xango"
+const xangoImportPath = "github.com/elaous/xango"
 
 func loadCSS(in LoaderInput) (LoaderResult, error) {
 	if !in.AliasGiven {

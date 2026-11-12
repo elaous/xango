@@ -1,5 +1,5 @@
 # gin-ssr-demo dev workflow. Separate Go module (like ../canvas-app):
-# replace-ing github.com/elaous/gojiberry with the local checkout so it
+# replace-ing github.com/elaous/xango with the local checkout so it
 # can depend on Gin and its security-middleware ecosystem without
 # adding any of that to the root module.
 .PHONY: run

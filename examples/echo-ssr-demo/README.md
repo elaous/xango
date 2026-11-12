@@ -8,7 +8,7 @@ a per-client rate limit -- all three built into Echo itself, unlike the
 hand-rolled middleware for the same coverage.
 
 It's a separate Go module (like `examples/canvas-app`), `replace`-ing
-`github.com/elaous/gojiberry` with the local checkout, so it can depend
+`github.com/elaous/xango` with the local checkout, so it can depend
 on Echo without adding it to the root module.
 
 ## How it works

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-contrib/secure"
 	"github.com/gin-gonic/gin"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 func newRouter() *gin.Engine {

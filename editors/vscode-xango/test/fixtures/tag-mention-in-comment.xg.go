@@ -9,7 +9,7 @@
 // reason ../fixtures/highlight-sample.go has one.
 package main
 
-import "github.com/elaous/gojiberry/xango"
+import "github.com/elaous/xango"
 
 // A is a normal component with no bare tag mentions in its comments.
 func A() xango.Node {

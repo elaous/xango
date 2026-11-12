@@ -23,7 +23,7 @@ func setupModuleWithXango(t *testing.T) (pkgDir string) {
 		t.Fatalf("could not find a `go` directive in %s/go.mod", repoRoot)
 	}
 	root := t.TempDir()
-	goMod := "module example.com/testmod\n\ngo " + goDirective[1] + "\n\nrequire github.com/elaous/gojiberry v0.0.0\n\nreplace github.com/elaous/gojiberry => " + repoRoot + "\n"
+	goMod := "module example.com/testmod\n\ngo " + goDirective[1] + "\n\nrequire github.com/elaous/xango v0.0.0\n\nreplace github.com/elaous/xango => " + repoRoot + "\n"
 	if err := os.WriteFile(filepath.Join(root, "go.mod"), []byte(goMod), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -46,7 +46,7 @@ import (
 	"os"
 
 	_ "example.com/testmod/pkg/App.css"
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 // @title bob
@@ -84,7 +84,7 @@ func TestPageMetadataFallsBackToDefaultTitleWhenOmitted(t *testing.T) {
 	dir := setupModuleWithXango(t)
 	src := `package main
 
-import "github.com/elaous/gojiberry/xango"
+import "github.com/elaous/xango"
 
 var DefaultTitle = "fallback title"
 
@@ -103,7 +103,7 @@ func main() {
 	}
 }
 `
-	src = strings.Replace(src, `import "github.com/elaous/gojiberry/xango"`, "import (\n\t\"strings\"\n\n\t\"github.com/elaous/gojiberry/xango\"\n)", 1)
+	src = strings.Replace(src, `import "github.com/elaous/xango"`, "import (\n\t\"strings\"\n\n\t\"github.com/elaous/xango\"\n)", 1)
 	out, err := Transpile(filepath.Join(dir, "main.xg"), []byte(src))
 	if err != nil {
 		t.Fatal(err)
@@ -119,7 +119,7 @@ func TestStylesheetsAnnotationIsRejectedWithAMigrationHint(t *testing.T) {
 	dir := setupModuleWithXango(t)
 	src := `package main
 
-import "github.com/elaous/gojiberry/xango"
+import "github.com/elaous/xango"
 
 // @stylesheets App.css
 func Page() xango.Node { return xango.Text("x") }
@@ -138,7 +138,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 var DefaultTitle = "t"
@@ -190,7 +190,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 // @title app
@@ -238,7 +238,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 // @title list
@@ -279,7 +279,7 @@ func TestPageMetadataLeavesUnannotatedFunctionsUntouched(t *testing.T) {
 	dir := setupModule(t)
 	src := `package main
 
-import "github.com/elaous/gojiberry/xango"
+import "github.com/elaous/xango"
 
 // Greeting is an ordinary component with an ordinary doc comment.
 func Greeting() xango.Node {
@@ -299,7 +299,7 @@ func TestPageMetadataErrorsWithoutASingleValueReturn(t *testing.T) {
 	dir := setupModule(t)
 	src := `package main
 
-import "github.com/elaous/gojiberry/xango"
+import "github.com/elaous/xango"
 
 var DefaultTitle = "t"
 
@@ -329,7 +329,7 @@ import (
 
 	_ "example.com/testmod/pkg/a.css"
 	_ "example.com/testmod/pkg/b.css"
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 // @title all

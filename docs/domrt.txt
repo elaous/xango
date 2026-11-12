@@ -1,4 +1,4 @@
-package domrt // import "github.com/elaous/gojiberry/domrt"
+package domrt // import "github.com/elaous/xango/domrt"
 
 
 FUNCTIONS

@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 type PageProps struct {

@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 func TestPageRendersExpectedHTML(t *testing.T) {

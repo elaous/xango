@@ -5,7 +5,7 @@ package sw
 import (
 	"syscall/js"
 
-	"github.com/elaous/gojiberry/domrt"
+	"github.com/elaous/xango/domrt"
 )
 
 // Event wraps a raw service worker event object.

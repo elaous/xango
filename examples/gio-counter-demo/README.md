@@ -9,10 +9,10 @@ desktop/mobile GPU window, not a browser) is a new consumer of the
 same tree, not a rewrite of it.
 
 It's a separate Go module (like `examples/canvas-app` and
-`examples/collab-editor-app`), `replace`-ing `github.com/elaous/gojiberry`
+`examples/collab-editor-app`), `replace`-ing `github.com/elaous/xango`
 with the local checkout (so it can depend on `gioui.org`, and the cgo/
 EGL/Vulkan/X11/Wayland bindings that pulls in, without adding any of
-that to the root module) and `github.com/elaous/gojiberry/xango/gio` with
+that to the root module) and `github.com/elaous/xango/gio` with
 the sibling `../../xango/gio` checkout (the actual renderer -- see that
 module's own README for how it works and what it's verified against;
 this demo doesn't define it locally).

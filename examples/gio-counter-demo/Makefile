@@ -1,5 +1,5 @@
 # gio-counter-demo dev workflow. Separate Go module (like
-# ../canvas-app): replace-ing github.com/elaous/gojiberry with the
+# ../canvas-app): replace-ing github.com/elaous/xango with the
 # local checkout so it can depend on gioui.org without adding it to
 # the root module.
 .PHONY: run
