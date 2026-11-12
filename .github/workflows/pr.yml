@@ -1,0 +1,87 @@
+name: PR tests
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  targeted-tests:
+    name: Targeted tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          check-latest: true
+          cache-dependency-path: "**/go.sum"
+
+      - name: Test changed packages
+        env:
+          BASE: origin/${{ github.base_ref }}
+        run: scripts/targeted-tests.sh
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Detect Go changes
+        id: changes
+        env:
+          BASE: origin/${{ github.base_ref }}
+        run: |
+          if git diff --name-only "$BASE...HEAD" | grep -qE '\.go$|\.xg$|go\.(mod|sum)$|^\.golangci\.yml$|^\.github/workflows/'; then
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Go
+        if: steps.changes.outputs.go == 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          check-latest: true
+          cache-dependency-path: "**/go.sum"
+
+      - name: Run golangci-lint
+        if: steps.changes.outputs.go == 'true'
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.15.0
+          args: ./...
+
+      - name: Run golangci-lint for js/wasm
+        if: steps.changes.outputs.go == 'true'
+        uses: golangci/golangci-lint-action@v8
+        env:
+          GOOS: js
+          GOARCH: wasm
+        with:
+          version: v2.15.0
+          args: ./...

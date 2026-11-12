@@ -1,0 +1,76 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  full-tests:
+    name: Full test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          check-latest: true
+          cache-dependency-path: "**/go.sum"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Gio system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc pkg-config libwayland-dev libx11-dev libx11-xcb-dev libxkbcommon-x11-dev \
+            libgles2-mesa-dev libegl1-mesa-dev libffi-dev libxcursor-dev libvulkan-dev \
+            libegl-mesa0 libgl1-mesa-dri mesa-vulkan-drivers
+
+      - name: Install golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.15.0
+          install-only: true
+
+      - name: Verify modules
+        run: go mod verify
+
+      - name: Check generated code is current
+        run: make generate generate-check
+
+      - name: Check API dumps are current
+        run: make docs docs-check
+
+      - name: Check formatting
+        run: make fmt-check
+
+      - name: Vet
+        run: make vet wasm-vet
+
+      - name: Test
+        run: make test
+
+      - name: Test nested modules with native Gio
+        run: make modules GIO_NATIVE=1
+
+      - name: Lint
+        run: make lint wasm-lint lint-modules GIO_NATIVE=1
+
+      - name: Run the VS Code grammar suite
+        run: make grammar-test-setup grammar-test
