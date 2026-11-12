@@ -18,7 +18,7 @@ func Greeting(props GreetingProps) xango.Node {
 
 Write `<div>...</div>` tags directly in Go source, anywhere a Go expression is legal. They compile down to plain Go that
 renders identically on the server (HTML strings) and in the browser (real DOM, via WASM), with no separate template
-language. Gojiberry ([github.com/elaous/gojiberry](https://github.com/elaous/gojiberry)) is built on Xangô.
+language. Xangô was extracted from Gojiberry ([github.com/elaous/gojiberry](https://github.com/elaous/gojiberry)), which now uses it.
 
 ## Status and compatibility
 
