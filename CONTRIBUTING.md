@@ -2,8 +2,8 @@
 
 Thank you for helping. Before you send a change:
 
-- Run the checks the repository runs: `make lint fmt-check generate-check docs-check test`. `make check` runs everything,
-  including the nested modules and the VS Code grammar suite.
+- Run the checks the repository runs: `make check`, or `make generate docs lint fmt-check generate-check docs-check test`. `make check` also runs
+  the nested modules and the VS Code grammar suite.
 - `scripts/targeted-tests.sh` runs only the packages a change touches; `scripts/targeted-tests.sh --list` prints what it
   would run.
 - Regenerate and commit the `*.xg.go` files whenever you change a `.xg` file or the compiler (`make generate`), and the

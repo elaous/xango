@@ -957,7 +957,8 @@ a line with the opening backtick).
 
 ## Development
 
-`make check` is the full local CI. Every target below MUST pass before a change is sent:
+`make check` is the full local CI. Every target below MUST pass before a change is sent. The shorter
+`make generate docs lint fmt-check generate-check docs-check test` also regenerates first, so stale files are detected:
 
 | Target | What it does |
 | --- | --- |
