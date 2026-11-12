@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /gio
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /examples/echo-ssr-demo
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /examples/gin-ssr-demo
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /examples/gio-counter-demo
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
