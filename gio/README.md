@@ -8,12 +8,10 @@ renderer-agnostic tree onto a real [Gio](https://gioui.org)
 new consumer of `xango.Node` rather than a rewrite of it.
 
 It's a separate Go module (like `../../examples/gio-counter-demo`, which
-depends on this one rather than defining it locally), `replace`-ing
-`github.com/elaous/xango` with the local checkout, so it can depend
-on `gioui.org` without adding it to the root module -- see gojiberry's
-own mobile-backend ROADMAP entry (task #107 in OnDesign's `docs/
-ROADMAP.md`) for the fuller reasoning behind keeping every Gio-touching
-piece in its own module.
+depends on this one rather than defining it locally). It requires a released
+`github.com/elaous/xango`, which keeps `gioui.org` out of the root module. To
+build it against local changes to the root module, use a `go.work` as described in
+[CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## How it works
 
