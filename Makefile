@@ -101,4 +101,4 @@ grammar-test:
 
 .PHONY: vscode-package
 vscode-package:
-	cd editors/vscode-xango && npx --yes @vscode/vsce package --allow-missing-repository
+	cd editors/vscode-xango && npx --yes @vscode/vsce package
