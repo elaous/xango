@@ -28,7 +28,7 @@ func Mount(container js.Value, initial xango.Node) *Root {
 }
 
 func (r *Root) Update(next xango.Node) {
-	r.tree = patch(r.container, r.tree, next)
+	r.tree = patch(r.container, js.Undefined(), r.tree, next)
 }
 
 // FirstNode returns the first DOM node of this Root's tree.
@@ -415,7 +415,7 @@ func nearestInDirection(cands []js.Value, cur int, down bool) int {
 	return best
 }
 
-func patch(parent js.Value, old *renderedNode, next xango.Node) *renderedNode {
+func patch(parent js.Value, emptyAnchor js.Value, old *renderedNode, next xango.Node) *renderedNode {
 	if old == nil {
 		rn := create(next)
 		for _, n := range rn.ownedNodes() {
@@ -440,7 +440,11 @@ func patch(parent js.Value, old *renderedNode, next xango.Node) *renderedNode {
 		}
 		return old
 	case xango.KindFragment:
-		old.children = patchChildren(parent, anchorAfter(parent, old), old.children, next.Children)
+		endAnchor := anchorAfter(old)
+		if endAnchor.IsUndefined() {
+			endAnchor = emptyAnchor
+		}
+		old.children = patchChildren(parent, endAnchor, old.children, next.Children)
 		return old
 	case xango.KindElement:
 		patchAttrs(old, next.Attrs)
@@ -471,7 +475,7 @@ func replace(parent js.Value, old *renderedNode, next xango.Node) *renderedNode 
 	return rn
 }
 
-func anchorAfter(parent js.Value, rn *renderedNode) js.Value {
+func anchorAfter(rn *renderedNode) js.Value {
 	nodes := rn.ownedNodes()
 	if len(nodes) == 0 {
 		return js.Undefined()
@@ -503,6 +507,10 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 			oldByKey[oldKeys[i]] = o
 		}
 	}
+	oldIndex := make(map[*renderedNode]int, len(old))
+	for i, o := range old {
+		oldIndex[o] = i
+	}
 	used := make(map[*renderedNode]bool, len(old))
 
 	result := make([]*renderedNode, len(next))
@@ -517,7 +525,7 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 		}
 		if match != nil {
 			used[match] = true
-			result[i] = patch(parent, match, n)
+			result[i] = patch(parent, firstNodeAfter(old, oldIndex[match], endAnchor), match, n)
 		} else {
 			result[i] = create(n)
 			for _, dn := range result[i].ownedNodes() {
@@ -535,13 +543,8 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 		}
 	}
 
+	ref := endAnchor
 	for i := len(result) - 1; i >= 0; i-- {
-		var ref js.Value
-		if i+1 < len(result) {
-			ref = result[i+1].firstNode()
-		} else {
-			ref = endAnchor
-		}
 		for _, dn := range reverse(result[i].ownedNodes()) {
 			// a node in place is left alone: re-inserting drops its focus
 			if inPlace(parent, dn, ref) {
@@ -557,6 +560,15 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 		}
 	}
 	return result
+}
+
+func firstNodeAfter(old []*renderedNode, index int, fallback js.Value) js.Value {
+	for _, o := range old[index+1:] {
+		if first := o.firstNode(); !first.IsUndefined() {
+			return first
+		}
+	}
+	return fallback
 }
 
 func reverse(vs []js.Value) []js.Value {
