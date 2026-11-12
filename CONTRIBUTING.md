@@ -10,6 +10,18 @@ Thank you for helping. Before you send a change:
   API dumps under `docs/` whenever you change an exported identifier (`make docs`).
 - Update the docs that describe what you changed (`README.md`, the package docs).
 
+## Developing the gio module against the working tree
+
+`gio/go.mod` requires a released `github.com/elaous/xango` and has no `replace`, so that
+`go get github.com/elaous/xango/gio` works from outside. To build `gio` against local changes to the root module,
+create an uncommitted workspace (`go.work` is git-ignored):
+
+```
+go work init . ./gio
+```
+
+The example modules keep a `replace` to the working tree and need no workspace.
+
 ## Licence of contributions
 
 The project is under the GNU AGPL, version 3, and also offers a commercial licence ([COMMERCIAL.md](COMMERCIAL.md)). To be

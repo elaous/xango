@@ -180,12 +180,8 @@ machine with a real GPU or display.
 
 ## Consuming this from another module
 
-Add both a `require` and a `replace` pointing at this module, the same
-shape `examples/gio-counter-demo`'s own `go.mod` uses:
-
 ```
-require github.com/elaous/xango/gio v0.0.0-00010101000000-000000000000
-replace github.com/elaous/xango/gio => /path/to/gojiberry/xango/gio
+go get github.com/elaous/xango/gio
 ```
 
 ## Not yet done
