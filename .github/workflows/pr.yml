@@ -71,14 +71,14 @@ jobs:
 
       - name: Run golangci-lint
         if: steps.changes.outputs.go == 'true'
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         with:
           version: v2.15.0
           args: ./...
 
       - name: Run golangci-lint for js/wasm
         if: steps.changes.outputs.go == 'true'
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         env:
           GOOS: js
           GOARCH: wasm
@@ -140,7 +140,7 @@ jobs:
 
       - name: Install golangci-lint
         if: steps.changes.outputs.nested == 'true'
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         with:
           version: v2.15.0
           install-only: true
