@@ -28,7 +28,7 @@ func Mount(container js.Value, initial xango.Node) *Root {
 }
 
 func (r *Root) Update(next xango.Node) {
-	r.tree = patch(r.container, r.tree, next)
+	r.tree = patch(r.container, js.Undefined(), r.tree, next)
 }
 
 // FirstNode returns the first DOM node of this Root's tree.
@@ -84,11 +84,22 @@ func (rn *renderedNode) ownedNodes() []js.Value {
 }
 
 func (rn *renderedNode) firstNode() js.Value {
-	nodes := rn.ownedNodes()
-	if len(nodes) == 0 {
+	switch rn.kind {
+	case xango.KindFragment:
+		for _, c := range rn.children {
+			if first := c.firstNode(); !first.IsUndefined() {
+				return first
+			}
+		}
 		return js.Undefined()
+	case xango.KindRaw:
+		if len(rn.rawNodes) == 0 {
+			return js.Undefined()
+		}
+		return rn.rawNodes[0]
+	default:
+		return rn.dom
 	}
-	return nodes[0]
 }
 
 func create(n xango.Node) *renderedNode {
@@ -415,7 +426,7 @@ func nearestInDirection(cands []js.Value, cur int, down bool) int {
 	return best
 }
 
-func patch(parent js.Value, old *renderedNode, next xango.Node) *renderedNode {
+func patch(parent js.Value, emptyAnchor js.Value, old *renderedNode, next xango.Node) *renderedNode {
 	if old == nil {
 		rn := create(next)
 		for _, n := range rn.ownedNodes() {
@@ -424,7 +435,7 @@ func patch(parent js.Value, old *renderedNode, next xango.Node) *renderedNode {
 		return rn
 	}
 	if old.kind != next.Kind || (next.Kind == xango.KindElement && old.tag != next.Tag) {
-		return replace(parent, old, next)
+		return replace(parent, emptyAnchor, old, next)
 	}
 	old.k = next.Key
 	switch next.Kind {
@@ -436,11 +447,15 @@ func patch(parent js.Value, old *renderedNode, next xango.Node) *renderedNode {
 		return old
 	case xango.KindRaw:
 		if old.text != next.Text {
-			return replace(parent, old, next)
+			return replace(parent, emptyAnchor, old, next)
 		}
 		return old
 	case xango.KindFragment:
-		old.children = patchChildren(parent, anchorAfter(parent, old), old.children, next.Children)
+		endAnchor := anchorAfter(old)
+		if endAnchor.IsUndefined() {
+			endAnchor = emptyAnchor
+		}
+		old.children = patchChildren(parent, endAnchor, old.children, next.Children)
 		return old
 	case xango.KindElement:
 		patchAttrs(old, next.Attrs)
@@ -451,7 +466,7 @@ func patch(parent js.Value, old *renderedNode, next xango.Node) *renderedNode {
 	return old
 }
 
-func replace(parent js.Value, old *renderedNode, next xango.Node) *renderedNode {
+func replace(parent, emptyAnchor js.Value, old *renderedNode, next xango.Node) *renderedNode {
 	oldNodes := old.ownedNodes()
 	rn := create(next)
 	if len(oldNodes) > 0 {
@@ -465,13 +480,17 @@ func replace(parent js.Value, old *renderedNode, next xango.Node) *renderedNode 
 		giveBackFocus(old)
 	} else {
 		for _, n := range rn.ownedNodes() {
-			parent.Call("appendChild", n)
+			if emptyAnchor.IsUndefined() {
+				parent.Call("appendChild", n)
+			} else {
+				parent.Call("insertBefore", n, emptyAnchor)
+			}
 		}
 	}
 	return rn
 }
 
-func anchorAfter(parent js.Value, rn *renderedNode) js.Value {
+func anchorAfter(rn *renderedNode) js.Value {
 	nodes := rn.ownedNodes()
 	if len(nodes) == 0 {
 		return js.Undefined()
@@ -495,29 +514,37 @@ func patchAttrs(old *renderedNode, next []xango.Attr) {
 }
 
 func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, next []xango.Node) []*renderedNode {
-	oldByKey := make(map[string]*renderedNode)
-	oldKeys := make([]string, len(old))
+	oldByKey := make(map[string]int)
 	for i, o := range old {
-		oldKeys[i] = o.key()
-		if oldKeys[i] != "" {
-			oldByKey[oldKeys[i]] = o
+		if k := o.key(); k != "" {
+			oldByKey[k] = i
 		}
 	}
-	used := make(map[*renderedNode]bool, len(old))
+	used := make([]bool, len(old))
+	anchors := followingAnchors(endAnchor, old)
+	skip := make([]int, len(old)+1)
+	for i := range skip {
+		skip[i] = i
+	}
 
 	result := make([]*renderedNode, len(next))
 	for i, n := range next {
-		var match *renderedNode
+		matched := -1
 		if n.Key != "" {
-			if o, ok := oldByKey[n.Key]; ok && !used[o] {
-				match = o
+			if j, ok := oldByKey[n.Key]; ok && !used[j] {
+				matched = j
 			}
-		} else if i < len(old) && !used[old[i]] && old[i].key() == "" {
-			match = old[i]
+		} else if i < len(old) && !used[i] && old[i].key() == "" {
+			matched = i
 		}
-		if match != nil {
-			used[match] = true
-			result[i] = patch(parent, match, n)
+		if matched >= 0 {
+			used[matched] = true
+			anchor := anchors[matched]
+			// earlier siblings in this pass may have detached the anchor
+			if old[matched].firstNode().IsUndefined() && !anchor.IsUndefined() && !anchor.IsNull() && !anchor.Get("parentNode").Equal(parent) {
+				anchor = attachedAnchorAfter(parent, endAnchor, old, skip, matched+1)
+			}
+			result[i] = patch(parent, anchor, old[matched], n)
 		} else {
 			result[i] = create(n)
 			for _, dn := range result[i].ownedNodes() {
@@ -526,8 +553,8 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 		}
 	}
 
-	for _, o := range old {
-		if !used[o] {
+	for i, o := range old {
+		if !used[i] {
 			for _, dn := range o.ownedNodes() {
 				parent.Call("removeChild", dn)
 			}
@@ -535,13 +562,8 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 		}
 	}
 
+	ref := endAnchor
 	for i := len(result) - 1; i >= 0; i-- {
-		var ref js.Value
-		if i+1 < len(result) {
-			ref = result[i+1].firstNode()
-		} else {
-			ref = endAnchor
-		}
 		for _, dn := range reverse(result[i].ownedNodes()) {
 			// a node in place is left alone: re-inserting drops its focus
 			if inPlace(parent, dn, ref) {
@@ -557,6 +579,42 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 		}
 	}
 	return result
+}
+
+func followingAnchors(endAnchor js.Value, old []*renderedNode) []js.Value {
+	anchors := make([]js.Value, len(old))
+	next := endAnchor
+	for i := len(old) - 1; i >= 0; i-- {
+		anchors[i] = next
+		if first := old[i].firstNode(); !first.IsUndefined() {
+			next = first
+		}
+	}
+	return anchors
+}
+
+func attachedAnchorAfter(parent, endAnchor js.Value, old []*renderedNode, skip []int, from int) js.Value {
+	i := findSkip(skip, from)
+	for i < len(old) {
+		first := old[i].firstNode()
+		if !first.IsUndefined() && first.Get("parentNode").Equal(parent) {
+			return first
+		}
+		skip[i] = i + 1
+		i = findSkip(skip, i+1)
+	}
+	return endAnchor
+}
+
+func findSkip(skip []int, i int) int {
+	root := i
+	for skip[root] != root {
+		root = skip[root]
+	}
+	for skip[i] != root {
+		skip[i], i = root, skip[i]
+	}
+	return root
 }
 
 func reverse(vs []js.Value) []js.Value {
