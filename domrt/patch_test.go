@@ -208,6 +208,20 @@ func TestKeyedReplacedSiblingStaleAnchor(t *testing.T) {
 	expectHTML(t, container, "<div><i></i><u></u></div>")
 }
 
+func TestKeyedReplacedSiblingKeepsFocusBeyondStaleAnchor(t *testing.T) {
+	container := newContainer(t)
+	root := Mount(container, xango.El("div", nil,
+		xango.Frag().WithKey("a"), xango.El("p", nil).WithKey("b"), xango.El("textarea", nil).WithKey("t")))
+	textarea := container.Call("querySelector", "textarea")
+	textarea.Call("focus")
+	root.Update(xango.El("div", nil,
+		xango.El("i", nil).WithKey("b"), xango.Frag(xango.El("u", nil)).WithKey("a"), xango.El("textarea", nil).WithKey("t")))
+	expectHTML(t, container, "<div><i></i><u></u><textarea></textarea></div>")
+	if !document().Get("activeElement").Equal(textarea) {
+		t.Fatal("textarea lost focus")
+	}
+}
+
 func TestConsecutiveEmptyFragments(t *testing.T) {
 	container := newContainer(t)
 	tree := func(filled int) xango.Node {
@@ -346,6 +360,11 @@ func TestDifferentialAgainstFreshMount(t *testing.T) {
 			if got, want := innerHTML(container), innerHTML(fresh); got != want {
 				t.Fatalf("seed %d step %d: html = %s, want %s\n a=%s\n next=%s", seed, step, got, want, describeNode(a), describeNode(next))
 			}
+		}
+		stop := recordMoves(container)
+		root.Update(a)
+		if moves := stop(); len(moves) != 0 {
+			t.Fatalf("seed %d: no-op update moved nodes %v\n a=%s", seed, moves, describeNode(a))
 		}
 	}
 }

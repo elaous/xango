@@ -538,7 +538,7 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 			anchor := anchors[matched]
 			// earlier siblings in this pass may have detached the anchor
 			if old[matched].firstNode().IsUndefined() && !anchor.IsUndefined() && !anchor.IsNull() && !anchor.Get("parentNode").Equal(parent) {
-				anchor = endAnchor
+				anchor = attachedAnchorAfter(parent, endAnchor, old[matched+1:])
 			}
 			result[i] = patch(parent, anchor, old[matched], n)
 		} else {
@@ -587,6 +587,15 @@ func followingAnchors(endAnchor js.Value, old []*renderedNode) []js.Value {
 		}
 	}
 	return anchors
+}
+
+func attachedAnchorAfter(parent, endAnchor js.Value, following []*renderedNode) js.Value {
+	for _, o := range following {
+		if first := o.firstNode(); !first.IsUndefined() && first.Get("parentNode").Equal(parent) {
+			return first
+		}
+	}
+	return endAnchor
 }
 
 func reverse(vs []js.Value) []js.Value {
