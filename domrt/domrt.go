@@ -84,11 +84,22 @@ func (rn *renderedNode) ownedNodes() []js.Value {
 }
 
 func (rn *renderedNode) firstNode() js.Value {
-	nodes := rn.ownedNodes()
-	if len(nodes) == 0 {
+	switch rn.kind {
+	case xango.KindFragment:
+		for _, c := range rn.children {
+			if first := c.firstNode(); !first.IsUndefined() {
+				return first
+			}
+		}
 		return js.Undefined()
+	case xango.KindRaw:
+		if len(rn.rawNodes) == 0 {
+			return js.Undefined()
+		}
+		return rn.rawNodes[0]
+	default:
+		return rn.dom
 	}
-	return nodes[0]
 }
 
 func create(n xango.Node) *renderedNode {
@@ -526,7 +537,7 @@ func patchChildren(parent js.Value, endAnchor js.Value, old []*renderedNode, nex
 			used[matched] = true
 			anchor := anchors[matched]
 			// earlier siblings in this pass may have detached the anchor
-			if !anchor.IsUndefined() && !anchor.IsNull() && !anchor.Get("parentNode").Equal(parent) {
+			if old[matched].firstNode().IsUndefined() && !anchor.IsUndefined() && !anchor.IsNull() && !anchor.Get("parentNode").Equal(parent) {
 				anchor = endAnchor
 			}
 			result[i] = patch(parent, anchor, old[matched], n)
