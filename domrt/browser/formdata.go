@@ -5,7 +5,7 @@ package browser
 import (
 	"syscall/js"
 
-	"github.com/elaous/gojiberry/domrt/html"
+	"github.com/elaous/xango/domrt/html"
 )
 
 // FormData wraps a JS FormData object.

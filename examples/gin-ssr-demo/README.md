@@ -6,7 +6,7 @@ real security middlewares fronting the page: secure headers, CORS, and
 a per-client rate limit.
 
 It's a separate Go module (like `examples/canvas-app`), `replace`-ing
-`github.com/elaous/gojiberry` with the local checkout, so it can depend
+`github.com/elaous/xango` with the local checkout, so it can depend
 on Gin and its middleware ecosystem without adding any of that to the
 root module.
 

@@ -7,7 +7,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/elaous/gojiberry/domrt/browser"
+	"github.com/elaous/xango/domrt/browser"
 )
 
 const vertexShaderSrc = `

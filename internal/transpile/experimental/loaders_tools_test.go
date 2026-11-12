@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/elaous/gojiberry/internal/transpile"
+	"github.com/elaous/xango/internal/transpile"
 )
 
 func fakeTools(t *testing.T, tools map[string]string) {

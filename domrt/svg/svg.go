@@ -2,7 +2,7 @@
 
 package svg
 
-import "github.com/elaous/gojiberry/domrt/html"
+import "github.com/elaous/xango/domrt/html"
 
 // Namespace is the SVG namespace URI.
 const Namespace = "http://www.w3.org/2000/svg"

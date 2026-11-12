@@ -11,9 +11,9 @@ import (
 	"gioui.org/op"
 	"gioui.org/widget/material"
 
-	"github.com/elaous/gojiberry/examples/gio-counter-demo/shared"
-	"github.com/elaous/gojiberry/xango"
-	"github.com/elaous/gojiberry/xango/gio"
+	"github.com/elaous/xango"
+	"github.com/elaous/xango/examples/gio-counter-demo/shared"
+	"github.com/elaous/xango/gio"
 )
 
 func TestCounterRendersAndClicksThroughRealGio(t *testing.T) {

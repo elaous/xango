@@ -1,4 +1,4 @@
-package sw // import "github.com/elaous/gojiberry/domrt/sw"
+package sw // import "github.com/elaous/xango/domrt/sw"
 
 
 FUNCTIONS

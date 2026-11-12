@@ -7,9 +7,9 @@ import (
 	"strings"
 	"syscall/js"
 
-	"github.com/elaous/gojiberry/domrt/browser"
-	"github.com/elaous/gojiberry/domrt/html"
-	"github.com/elaous/gojiberry/domrt/svg"
+	"github.com/elaous/xango/domrt/browser"
+	"github.com/elaous/xango/domrt/html"
+	"github.com/elaous/xango/domrt/svg"
 )
 
 const tinyPNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAIAAAA7ljmRAAAAGElEQVR4nGI5wWDEAANMDEgAhQMIAAD//yXJAQO5Nc3AAAAAAElFTkSuQmCC"

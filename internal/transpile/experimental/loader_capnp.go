@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/elaous/gojiberry/internal/transpile"
+	"github.com/elaous/xango/internal/transpile"
 )
 
 var capnpGoImportRe = regexp.MustCompile(`\$Go\.import\(\s*"([^"]+)"\s*\)`)

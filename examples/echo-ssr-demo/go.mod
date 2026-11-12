@@ -1,11 +1,11 @@
-module github.com/elaous/gojiberry/examples/echo-ssr-demo
+module github.com/elaous/xango/examples/echo-ssr-demo
 
 go 1.26.0
 
-replace github.com/elaous/gojiberry => ../..
+replace github.com/elaous/xango => ../..
 
 require (
-	github.com/elaous/gojiberry v0.0.0-00010101000000-000000000000
+	github.com/elaous/xango v0.0.0-00010101000000-000000000000
 	github.com/labstack/echo/v4 v4.15.4
 	golang.org/x/time v0.15.0
 )

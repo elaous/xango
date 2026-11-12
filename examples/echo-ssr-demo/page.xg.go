@@ -3,7 +3,7 @@
 package main
 
 import (
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 type PageProps struct {

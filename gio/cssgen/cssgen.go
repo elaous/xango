@@ -10,7 +10,7 @@ import (
 
 	"gioui.org/unit"
 
-	"github.com/elaous/gojiberry/xango/gio"
+	"github.com/elaous/xango/gio"
 )
 
 type Tokens map[string]string

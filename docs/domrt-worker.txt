@@ -1,4 +1,4 @@
-package worker // import "github.com/elaous/gojiberry/domrt/worker"
+package worker // import "github.com/elaous/xango/domrt/worker"
 
 
 FUNCTIONS

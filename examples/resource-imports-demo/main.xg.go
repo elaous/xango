@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"encoding/json"
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 var configBytes = []byte("{\n  \"title\": \"gojiberry\"\n}\n")
@@ -20,7 +20,7 @@ var config SiteConfig = func() SiteConfig {
 }()
 
 func init() {
-	xango.RegisterStyle("github.com/elaous/gojiberry/examples/resource-imports-demo/style.css", "body { font-family: sans-serif; }\n")
+	xango.RegisterStyle("github.com/elaous/xango/examples/resource-imports-demo/style.css", "body { font-family: sans-serif; }\n")
 }
 
 type SiteConfig struct {

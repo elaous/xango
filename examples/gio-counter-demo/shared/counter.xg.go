@@ -5,7 +5,7 @@ package shared
 import (
 	"strconv"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 type CounterProps struct {

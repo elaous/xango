@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 func TestEscapesTheNameParam(t *testing.T) {

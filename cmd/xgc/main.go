@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/elaous/gojiberry/internal/transpile"
-	"github.com/elaous/gojiberry/internal/transpile/experimental"
+	"github.com/elaous/xango/internal/transpile"
+	"github.com/elaous/xango/internal/transpile/experimental"
 )
 
 func main() {

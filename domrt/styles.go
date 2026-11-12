@@ -2,7 +2,7 @@
 
 package domrt
 
-import "github.com/elaous/gojiberry/xango"
+import "github.com/elaous/xango"
 
 // InstallStyles adds a style element to the document head.
 func InstallStyles() {

@@ -14,7 +14,7 @@ import (
 	"os"
 
 	%s
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 func main() {
@@ -57,7 +57,7 @@ func TestNamedCSSImportBindsTheText(t *testing.T) {
 import (
 	"fmt"
 	theme "example.com/testmod/pkg/x.css"
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
 )
 
 func main() {

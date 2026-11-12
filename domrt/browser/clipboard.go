@@ -5,7 +5,7 @@ package browser
 import (
 	"syscall/js"
 
-	"github.com/elaous/gojiberry/domrt"
+	"github.com/elaous/xango/domrt"
 )
 
 // WriteClipboardText writes text to the system clipboard.

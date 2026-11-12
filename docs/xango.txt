@@ -1,4 +1,4 @@
-package xango // import "github.com/elaous/gojiberry/xango"
+package xango // import "github.com/elaous/xango"
 
 
 FUNCTIONS

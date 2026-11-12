@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"syscall/js"
 
-	"github.com/elaous/gojiberry/domrt"
-	"github.com/elaous/gojiberry/xango"
+	"github.com/elaous/xango"
+	"github.com/elaous/xango/domrt"
 )
 
 type CounterProps struct {

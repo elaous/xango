@@ -8,8 +8,8 @@ import (
 	"strings"
 	"syscall/js"
 
-	"github.com/elaous/gojiberry/domrt"
-	"github.com/elaous/gojiberry/domrt/sw"
+	"github.com/elaous/xango/domrt"
+	"github.com/elaous/xango/domrt/sw"
 )
 
 const (

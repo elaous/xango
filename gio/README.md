@@ -9,7 +9,7 @@ new consumer of `xango.Node` rather than a rewrite of it.
 
 It's a separate Go module (like `../../examples/gio-counter-demo`, which
 depends on this one rather than defining it locally), `replace`-ing
-`github.com/elaous/gojiberry` with the local checkout, so it can depend
+`github.com/elaous/xango` with the local checkout, so it can depend
 on `gioui.org` without adding it to the root module -- see gojiberry's
 own mobile-backend ROADMAP entry (task #107 in OnDesign's `docs/
 ROADMAP.md`) for the fuller reasoning behind keeping every Gio-touching
@@ -184,8 +184,8 @@ Add both a `require` and a `replace` pointing at this module, the same
 shape `examples/gio-counter-demo`'s own `go.mod` uses:
 
 ```
-require github.com/elaous/gojiberry/xango/gio v0.0.0-00010101000000-000000000000
-replace github.com/elaous/gojiberry/xango/gio => /path/to/gojiberry/xango/gio
+require github.com/elaous/xango/gio v0.0.0-00010101000000-000000000000
+replace github.com/elaous/xango/gio => /path/to/gojiberry/xango/gio
 ```
 
 ## Not yet done
