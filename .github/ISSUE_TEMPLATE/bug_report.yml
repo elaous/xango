@@ -1,0 +1,43 @@
+name: Bug report
+description: Something does not work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security vulnerabilities MUST NOT be reported here. Use the repository's **Security** tab,
+        **Report a vulnerability**.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what you saw instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: A minimal `.xg` file or Go snippet helps most.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Xangô version or commit
+  - type: dropdown
+    id: renderer
+    attributes:
+      label: Renderer
+      options: [Server (xango.Render), Browser (domrt), Gio, Compiler (xgc), Other]
+  - type: input
+    id: go-version
+    attributes:
+      label: Go version
+      description: Output of `go version`.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Remove private text, hostnames and credentials first.
+      render: shell
