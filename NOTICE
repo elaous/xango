@@ -1,0 +1,35 @@
+Xangô
+https://github.com/elaous/xango
+
+Copyright (C) 2026 the Xangô authors (the contributors recorded in this
+repository's history).
+
+This code originated in Gojiberry, https://github.com/elaous/gojiberry, at
+commit aa313dfaa8e5.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, version 3 of the License. It is distributed WITHOUT ANY
+WARRANTY; see the file LICENSE for the full text. A commercial licence is
+available for use the GNU AGPL does not fit: see COMMERCIAL.md.
+
+Additional terms under section 7(b) of the GNU AGPL, version 3
+----------------------------------------------------------------
+Section 7(b) lets this project require that reasonable legal notices and author
+attributions stay with the work. This project requires that, in every copy and
+every modified version, whether distributed or run as a network service:
+
+  1. this NOTICE file, and the copyright and licence notices of the source
+     files, are kept; and
+  2. the credit "Made with the Xangô project, github.com/elaous/xango" is kept
+     in the places where the work shows its own notices to the people who use
+     it, and is not presented as the work of someone else.
+
+Names, logos and the project's name are not licensed by this file: a modified
+version should say that it is modified and should not suggest that the
+project endorses it.
+
+Third-party material
+--------------------
+Fonts, icons and libraries that this repository carries or downloads have the
+licences their authors chose; those are not changed by this file.
