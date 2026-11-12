@@ -7,16 +7,17 @@ replace github.com/elaous/xango => ../..
 replace github.com/elaous/xango/gio => ../../gio
 
 require (
-	gioui.org v0.10.1
+	gioui.org v0.10.3
 	github.com/elaous/xango v0.1.0
 	github.com/elaous/xango/gio v0.1.0
 )
 
 require (
 	gioui.org/cmd v0.10.0 // indirect
-	gioui.org/shader v1.0.8 // indirect
+	gioui.org/shader v1.0.9 // indirect
 	github.com/akavel/rsrc v0.10.1 // indirect
-	github.com/go-text/typesetting v0.3.4 // indirect
+	github.com/go-text/typesetting v0.3.5 // indirect
+	github.com/godbus/dbus/v5 v5.2.2 // indirect
 	golang.org/x/exp/shiny v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
 	golang.org/x/image v0.44.0 // indirect
 	golang.org/x/mod v0.41.0 // indirect
