@@ -24,7 +24,8 @@ func canBreakBoundary(a, b Node) bool {
 	return isBlockLevel(a) || isBlockLevel(b)
 }
 
-// RenderIndented is Render's pretty-printing counterpart.
+// RenderIndented is Render's pretty-printing counterpart. It applies the
+// same tag and attribute name validation and returns an error on a violation.
 func RenderIndented(n Node) (string, error) {
 	var b strings.Builder
 	pw := &prettyWriter{b: &b}
@@ -65,6 +66,9 @@ func (pw *prettyWriter) render(n Node, depth int) {
 		return
 	}
 	pw.writeOpenTag(n)
+	if pw.err != nil {
+		return
+	}
 	pw.newline(depth + 1)
 	pw.renderChildren(n.Children, depth+1)
 	pw.newline(depth)
@@ -88,6 +92,9 @@ func (pw *prettyWriter) newline(depth int) {
 }
 
 func (pw *prettyWriter) writeOpenTag(n Node) {
+	if pw.err = validateElement(n); pw.err != nil {
+		return
+	}
 	pw.b.WriteString("<")
 	pw.b.WriteString(n.Tag)
 	for _, a := range n.Attrs {

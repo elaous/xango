@@ -14,6 +14,11 @@ var voidElements = map[string]bool{
 }
 
 // Render writes n as HTML to w.
+//
+// Element tag names and attribute names MUST match
+// ^[A-Za-z][A-Za-z0-9:_.-]*$ (custom elements such as my-widget qualify);
+// otherwise Render stops and returns an error. Output already written to w
+// before the offending node is not retracted.
 func Render(w io.Writer, n Node) error {
 	rw := renderWriter{w: w}
 	rw.render(n)
@@ -62,7 +67,40 @@ func (rw *renderWriter) render(n Node) {
 	}
 }
 
+func isValidName(s string) bool {
+	if s == "" || !isASCIILetter(s[0]) {
+		return false
+	}
+	for i := 1; i < len(s); i++ {
+		c := s[i]
+		if !isASCIILetter(c) && (c < '0' || c > '9') &&
+			c != ':' && c != '_' && c != '.' && c != '-' {
+			return false
+		}
+	}
+	return true
+}
+
+func isASCIILetter(c byte) bool {
+	return c|0x20 >= 'a' && c|0x20 <= 'z'
+}
+
+func validateElement(n Node) error {
+	if !isValidName(n.Tag) {
+		return fmt.Errorf("xango: invalid element tag name %q", n.Tag)
+	}
+	for _, a := range n.Attrs {
+		if a.Handler == nil && !isValidName(a.Name) {
+			return fmt.Errorf("xango: invalid attribute name %q on <%s>", a.Name, n.Tag)
+		}
+	}
+	return nil
+}
+
 func (rw *renderWriter) renderElement(n Node) {
+	if rw.err = validateElement(n); rw.err != nil {
+		return
+	}
 	rw.writeString("<")
 	rw.writeString(n.Tag)
 	for _, a := range n.Attrs {
