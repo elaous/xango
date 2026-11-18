@@ -101,4 +101,27 @@ func TestPageAndSecurityMiddleware(t *testing.T) {
 			t.Fatalf("4th rapid request from the same client got status %d, want 429 (burst of 3 should be exhausted)", last.StatusCode)
 		}
 	})
+
+	t.Run("rate limiter ignores a spoofed X-Forwarded-For", func(t *testing.T) {
+		limSrv := httptest.NewServer(newRouter())
+		defer limSrv.Close()
+
+		var last *http.Response
+		for i := 0; i < 4; i++ {
+			req, err := http.NewRequest(http.MethodGet, limSrv.URL+"/", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			req.Header.Set("X-Forwarded-For", "203.0.113."+string(rune('1'+i)))
+			resp, err := http.DefaultClient.Do(req)
+			if err != nil {
+				t.Fatalf("GET / (request %d): %v", i, err)
+			}
+			resp.Body.Close()
+			last = resp
+		}
+		if last.StatusCode != http.StatusTooManyRequests {
+			t.Fatalf("4th request with rotating X-Forwarded-For got status %d, want 429", last.StatusCode)
+		}
+	})
 }

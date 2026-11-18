@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -36,6 +37,7 @@ func newRouter() *echo.Echo {
 			Rate:  rate.Limit(2),
 			Burst: 3,
 		}),
+		IdentifierExtractor: remoteAddrIdentifier,
 	}))
 
 	e.GET("/", func(c echo.Context) error {
@@ -44,4 +46,12 @@ func newRouter() *echo.Echo {
 	})
 
 	return e
+}
+
+func remoteAddrIdentifier(c echo.Context) (string, error) {
+	host, _, err := net.SplitHostPort(c.Request().RemoteAddr)
+	if err != nil {
+		return c.Request().RemoteAddr, nil
+	}
+	return host, nil
 }
